@@ -21,31 +21,31 @@ export TMPDIR=/fast/users/$USER/scratch/tmp
 
 echo startInst
 # mamba activate modisco-lite
-python modisco_TM.py hypothetical_contribution_scores_mean_HASMC_Chol.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_RAW_TGFB.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_RAW_IL1B.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_RAW_CTRL.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz
-python modisco_TM.py hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_HASMC_Chol.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_RAW_TGFB.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_RAW_IL1B.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_RAW_CTRL.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz ./scripts/Sequences.npz
+python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz ./scripts/Sequences.npz
 
 
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_HASMC_Chol.npz.h5 -o report_HASMC_chol/ -s report_HASMC_Chol/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz.h5 -o report_HepG2_untreatedPilot/ -s report_HepG2_untreatedPilot/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz.h5 -o report_HASMC_untreatedPilot/ -s report_HASMC_untreatedPilot/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz.h5 -o report_TeloHAEC_IL1b_24h/ -s report_TeloHAEC_IL1b_24h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz.h5 -o report_TeloHAEC_IL1b_6h/ -s report_TeloHAEC_IL1b_6h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_RAW_TGFB.npz.h5 -o report_RAW_TGFB/ -s report_RAW_TGFB/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz.h5 -o report_TeloHAEC_CTRL/ -s report_TeloHAEC_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_RAW_IL1B.npz.h5 -o report_RAW_IL1B/ -s report_RAW_IL1B/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_RAW_CTRL.npz.h5 -o report_RAW_CTRL/ -s report_RAW_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz.h5 -o report_ccell_3T3_undiff_CTRL/ -s report_ccell_3T3_undiff_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz.h5 -o report_cell_3T3_undiff_TGFB/ -s report_cell_3T3_undiff_TGFB/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz.h5 -o report_cell_3T3_diff_CTRL/ -s report_cell_3T3_diff_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_HASMC_Chol.npz.h5 -o report_HASMC_chol/ -s report_HASMC_Chol/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz.h5 -o report_HepG2_untreatedPilot/ -s report_HepG2_untreatedPilot/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz.h5 -o report_HASMC_untreatedPilot/ -s report_HASMC_untreatedPilot/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz.h5 -o report_TeloHAEC_IL1b_24h/ -s report_TeloHAEC_IL1b_24h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz.h5 -o report_TeloHAEC_IL1b_6h/ -s report_TeloHAEC_IL1b_6h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_RAW_TGFB.npz.h5 -o report_RAW_TGFB/ -s report_RAW_TGFB/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz.h5 -o report_TeloHAEC_CTRL/ -s report_TeloHAEC_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_RAW_IL1B.npz.h5 -o report_RAW_IL1B/ -s report_RAW_IL1B/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_RAW_CTRL.npz.h5 -o report_RAW_CTRL/ -s report_RAW_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz.h5 -o report_ccell_3T3_undiff_CTRL/ -s report_ccell_3T3_undiff_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz.h5 -o report_cell_3T3_undiff_TGFB/ -s report_cell_3T3_undiff_TGFB/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+modisco report -i ./scriptsmodisco_resultshypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz.h5 -o report_cell_3T3_diff_CTRL/ -s report_cell_3T3_diff_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 
 echo finished
