@@ -7,7 +7,7 @@ Input:                  Input 1 are labels (experimental activities). Input 2 ar
 
 Outpu:                  Boxplots for activities with and without motifs of interest
 
-example bash command:   python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
+example bash command:   python ./scripts/sanity_check_modisco_results.py ./data/2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt ./data/starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
 
 """
 
