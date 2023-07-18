@@ -25,4 +25,4 @@ echo startInst
 # mamba activate CNN_TM
 python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv train bla chr8
 
-echo done
+echo finished
