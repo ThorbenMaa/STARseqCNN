@@ -25,12 +25,12 @@ First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 This can be done using the `train_or_eval_CNNs.py` script in the "load" mode (documentation and example bash commands provided in the script). The script will calculate pearson correlations between 
 predicted and experimental STARseq activity and plot corresponding scatter plots.
 
-### In-silico-mutagenisis (ISM)
+### In-silico-mutagenisis (ISM) for model interpretation with tfmodisco-lite
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 You can use the `ism_TM.py` script to generate one-hot-encoded sequences and the corresponding raw CNN scores in a format suitable for tfmodisco-lite for all experimental set-ups explained in the manuscript. Note that the CNN raw scores can not be directly used
 for tfmodisco-lite but have to be further processed using `modisco_TM.py` (documentation and example bash commands provided in the respective scripts). To make use of slurm, you can also use an sbatch script provided in `sbatch_ism.sh`. 
 
-### Motifs learned by the model and comparing them to known motifs using tfmodisco-lite
+### Model interpretation using tfmodisco-lite - motifs learned by the model and comparing them to known motifs
 First, activate the `modisco_lite` environment using `mamba activate modisco_lite`.
 Use the script `mosidco_TM.py` with the .npz files generated in the previous step by the `ism_TM.py` script as inputs (documentation and example bash commands provided in the respective scripts). The script will create a tfmodisco-lite result.h5 file. 
 You can create tfmodisco-lite reports from this results file using e.g.:
