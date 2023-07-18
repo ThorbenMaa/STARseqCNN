@@ -1,0 +1,16 @@
+name: modisco-lite
+channels:
+  - conda-forge
+  - default
+  - bioconda
+  - defaults
+dependencies:
+  - click
+  - h5py
+  - numpy
+  - python[version='<3.11']
+  - pip
+  - meme
+  - ipython
+  - ca-certificates
+  - openssl

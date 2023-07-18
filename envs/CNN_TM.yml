@@ -1,0 +1,17 @@
+name: CNN_TM
+channels:
+  - conda-forge
+  - default
+  - bioconda
+  - defaults
+dependencies:
+  - python
+  - ca-certificates
+  - openssl
+  - matplotlib
+  - libgcc
+  - certifi
+  - gxx_linux-64
+  - pandas
+  - scipy
+prefix: /data/gpfs-1/users/tmaass_m/work/miniconda/envs/CNN_TM
