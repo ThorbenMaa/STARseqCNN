@@ -30,7 +30,7 @@ First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 You can use the `ism_TM.py` script to generate one-hot-encoded sequences and the corresponding raw CNN scores in a format suitable for tfmodisco-lite for all experimental set-ups explained in the manuscript. Note that the CNN raw scores can not be directly used
 for tfmodisco-lite but have to be further processed using `modisco_TM.py` (documentation and example bash commands provided in the respective scripts). To make use of slurm, you can also use an sbatch script provided in `./sbatch_scripts/sbatch_ism.sh`. 
 
-### tfmodisco-lizte analysis
+### tfmodisco-lite analysis
 First, activate the `modisco_lite` environment using `mamba activate modisco_lite`.
 Use the script `mosidco_TM.py` with the .npz files generated in the previous step by the `ism_TM.py` script as inputs (documentation and example bash commands provided in the respective scripts). The script will create a tfmodisco-lite result.h5 file. 
 You can create tfmodisco-lite reports from this results file using e.g.:
@@ -42,7 +42,13 @@ You can also use an sbatch script provided in `./sbatch_scripts/sbatch_tfmodisco
 
 More information on how to use tfmodisco-lite are given at the corresponding github repository https://github.com/jmschrei/tfmodisco-lite/tree/main. 
 
+The motifs the model has learned can look like this:
+![alt text for screen readers](pos_patterns.pattern_0.cwm.fwd.png "enhancer motif learned by CNN")
+
+In this case, the motif matches a known motif from the JASPAr data base:
+![alt text for screen readers](MA1508.1.png "MA1508.1 motif from JASPAR data base")
+
 ### Sanity check
 Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
-![alt text for screen readers](boxplot_HASMC_CholTGAGTCA.svg "Boxplots")
+![alt text for screen readers](boxplot_HASMC_CholGGAAAT.svg "Boxplots")
 
