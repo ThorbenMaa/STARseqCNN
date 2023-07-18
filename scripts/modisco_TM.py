@@ -7,7 +7,7 @@ Inputs:                 Input 1 is file with raw CNN scores as .npz file with nu
 
 Output:                 modisco results in as .h5 file
 
-Example command:        python modisco_TM.py hypothetical_contribution_scores_mean_HASMC_Chol.npz Sequences.npz
+Example command:        python ./scripts/modisco_TM.py ./scripts/hypothetical_contribution_scores_mean_HASMC_Chol.npz Sequences.npz
 
 """
 
