@@ -24,4 +24,4 @@ echo startInst
 # mamba activate CNN_TM
 python ism_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv CNN_StarSeq_model_Minna_deepSTAR_lr0.001
 
-echo done
+echo finished
