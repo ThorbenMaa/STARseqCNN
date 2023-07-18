@@ -8,7 +8,7 @@ Inputs:             Input 1 are labels also used for model training and evaluati
 
 Outputs:            npz files with one hot encoded sequences following the ISM approach (see above) and with raw prediction scores of the CNN given as Input 1. 
 
-example command:    python ism_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv CNN_StarSeq_model_Minna_deepSTAR_lr0.001
+example command:    python ./data/ism_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt ./data/starrseq-all-final-toorder_oligocomposition.csv .scripts/CNN_StarSeq_model_Minna_deepSTAR_lr0.001
 
 
 """
