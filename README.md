@@ -1,5 +1,5 @@
 # STARseqCNN
-This repository contains and describes code used to train and evaluate multi task STARseq CNNs trained on STARseq data provided by the Kaikkonen lab.
+This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs trained on STARseq data provided by the Kaikkonen lab.
 
 ## Worklflow
 
