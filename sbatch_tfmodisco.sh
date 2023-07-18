@@ -12,7 +12,7 @@
 #SBATCH --mem=50GB
 #  Request one hour maximal execution time (hard constraint):
 #SBATCH --time=0-10:00:00
-#SBATCH --job-name=ism_and_modisco
+#SBATCH --job-name=modisco
 
 # Initialize the module system:sbat  
 source /etc/profile.d/modules.sh
