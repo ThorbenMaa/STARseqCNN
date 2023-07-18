@@ -48,4 +48,4 @@ modisco report -i modisco_resultshypothetical_contribution_scores_mean_ccell_3T3
 modisco report -i modisco_resultshypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz.h5 -o report_cell_3T3_undiff_TGFB/ -s report_cell_3T3_undiff_TGFB/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 modisco report -i modisco_resultshypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz.h5 -o report_cell_3T3_diff_CTRL/ -s report_cell_3T3_diff_CTRL/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 
-echo done
+echo finished
