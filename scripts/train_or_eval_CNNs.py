@@ -8,8 +8,8 @@ Inputs:             Input 1 are labels for model training and evaluation. Input 
 
 further parameters: can be specified in the parameters section of this script. 
 
-Example commands:   `python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv train bla chr8`
-                    `python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8`
+Example commands:   `python ./scripts/train_or_eval_CNNs.py ./data/2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt ./data/starrseq-all-final-toorder_oligocomposition.csv train bla chr8`
+                    `python ./scripts/train_or_eval_CNNs.py ./data/2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt ./data/starrseq-all-final-toorder_oligocomposition.csv load ./scripts/CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8`
 
 Outputs:            Trained CNNs or evalutaion of a pre-trained CNN.
 
