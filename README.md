@@ -71,6 +71,6 @@ sbatch sbatch_ism.sh
 wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 sbatch sbatch_tfmodisco.sh
 
-#sanity check of chosen motifs
+#sanity check of selected motifs
 python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
 ```
