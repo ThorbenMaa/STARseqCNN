@@ -7,7 +7,7 @@ This repository contains and describes code used to train, evaluate, and interpr
 Use `git clone https://github.com/ThorbenMaa/STARseqCNN.git`. Operate from inside the directory.
 
 ### Install dependencies
-I recommend to use mamba to create environments and install dependencies:
+I recommend to use [mamba](https://mamba.readthedocs.io/en/latest/installation.html) to create environments and install dependencies:
 
 ```
 mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
