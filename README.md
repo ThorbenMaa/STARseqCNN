@@ -43,7 +43,7 @@ modisco report -i modisco_resultshypothetical_contribution_scores_mean_HASMC_Cho
 ```
 You can also use an sbatch script provided in `sbatch_tfmodisco.sh` to make use of slurm. Here, all commands for generating tfmodisco results and reports used for the analysis of the manuscript are listed. 
 
-More information on how to use tfmodisco-lite are given at the corresponding github repository https://github.com/jmschrei/tfmodisco-lite/tree/main. 
+More information on how to use tfmodisco-lite are given at the corresponding [github repository](https://github.com/jmschrei/tfmodisco-lite/tree/main). More information on the ISM approach can be found at the [paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02811-x) by Agarwal and Kelley, 2022.
 
 The motifs the model has learned can look like this:
 ![alt text for screen readers](pos_patterns.pattern_0.cwm.fwd.png "enhancer motif learned by CNN")
