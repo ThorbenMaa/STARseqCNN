@@ -57,7 +57,7 @@ Has the CNN really learned motifs that enhance/repress activity in the STARseq e
 ![alt text for screen readers](boxplot_HASMC_CholGGAAAT.svg "Boxplots")
 As you can see, sequences in the data set containing GGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
 
-## The workflow in comments
+## The workflow in bash commands
 > ```
 > #clone repo
 > git clone https://github.com/ThorbenMaa/STARseqCNN.git
