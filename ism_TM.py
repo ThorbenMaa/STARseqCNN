@@ -34,6 +34,7 @@ def one_hot_encode(seq): #taken from https://stackoverflow.com/questions/3426377
 
 #parameters
 sequence_length=198
+batch_size=128
 
 #import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
