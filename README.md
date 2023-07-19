@@ -1,5 +1,5 @@
 # STARseqCNN
-This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs trained on STARseq data from multiple experimental set-ups provided by the Kaikkonen lab. The folder `finalModel` contains the tarined model used for further analysis in the manuscript.
+This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the Kaikkonen lab. The folder `finalModel` contains the tarined model used for further analysis in the manuscript.
 
 ## Worklflow
 
