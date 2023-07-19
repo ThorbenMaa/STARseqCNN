@@ -161,7 +161,7 @@ np.savez('hypothetical_contribution_scores_mean_HASMC_Chol.npz', hypothetical_co
 np.savez('hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz', hypothetical_contribution_scores_mean_HepG2_untreatedPilot)
 
 #save sequences as npz file
-np.savez('/data/gpfs-1/work/groups/ag_kircher/Kaikkonen_2023/filesFromMinnaKaikkonen/Sequences.npz', seqs_tfmodisco_format)
+np.savez('Sequences.npz', seqs_tfmodisco_format)
 
 
 
