@@ -22,9 +22,6 @@ import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"]="2" #to supress warnings with loading tf
 import tensorflow as tf
 from tensorflow import keras
-import numpy as np
-import sys
-from scipy import stats
 import random
 random.seed(42)#to make things reproducable, 42 is abitrary
 np.random.seed(42)#to make things reproducable, 42 is abitrary
@@ -35,13 +32,8 @@ def one_hot_encode(seq): #taken from https://stackoverflow.com/questions/3426377
     seq2 = [mapping[i] for i in seq]
     return np.eye(4)[seq2]
 
-print("start")
 #parameters
 sequence_length=198
-learning_rate=[1, 0.1, 0.001, 0.0001, 0.00001]#0.001#0.01#0.1#0.001
-batch_size=128
-epochs=200
-number_cell_types=12 #also hot encoded below, also needs to be change below when processing tarining and testing data
 
 #import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
