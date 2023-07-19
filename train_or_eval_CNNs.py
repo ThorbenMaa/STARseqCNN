@@ -194,7 +194,7 @@ if sys.argv[3]=="train":
         
         #save model
         print("save model"+str(lr))
-        model.save("CNN_StarSeq_model_Minna_deepSTAR_lr0.001"+str(lr))
+        model.save("CNN_StarSeq_model_Minna_Max"+str(lr))
         
         #quick model evaluation on test data to select models for further evaluation; printed in output of this script
         model.evaluate(input_seq_test, input_label_test, batch_size=batch_size, verbose=2)
