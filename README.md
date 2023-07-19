@@ -14,17 +14,17 @@ mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 ```
 
-### load experimental labels and corresponding sequences (will be added upon publication)
+### Load experimental labels and corresponding sequences (will be added upon publication)
 also needs ot be added in the "workflow in comments" section
 
-### train CNNs
+### Train CNNs
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 You can either directly run `train_or_eval_CNNs.py` in the "train" mode (documentation and example bash commands provided in the script) or run the script using slurm within an sbatch script. An example with reasonable recources is given in `sbtachTrain_CNN_TM.sh` (example bash command given in script). 
 
 The script prints a lot of information. Among others, after each training, it will print the perfromance on a hold-out test data set. The model with the best perfromance can than be used for further analysis.
 In the manuscript, the [DeepSTAR](https://colab.research.google.com/drive/1Xgak40TuxWWLh5P5ARf0-4Xo0BcRn0Gd)-like architecture with a learning rate of 0.001 was chosen. 
 
-### further evaluate CNNs
+### Further evaluate CNNs
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 This can be done using the `train_or_eval_CNNs.py` script in the "load" mode (documentation and example bash commands provided in the script). The script will calculate pearson correlations between 
 predicted and experimental STARseq activity and plot corresponding scatter plots.
