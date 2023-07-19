@@ -33,7 +33,7 @@ print(np.array(scores).shape)
 print(scores.dtype)
 
 #my seqs final
-seqs = np.load(str(sys.argv[1])) #"Sequences.npz"
+seqs = np.load(str(sys.argv[2])) #"Sequences.npz"
 seqs= seqs.f.arr_0
 seqs=seqs.astype('bool')
 print(seqs)
