@@ -68,6 +68,9 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 > #install dependencies
 > mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 > mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
+>
+> #download data
+> wget blablabla.com
 > 
 > #train models
 > mamba activate CNN_TM
