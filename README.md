@@ -21,7 +21,7 @@ First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
 You can either directly run `train_or_eval_CNNs.py` in the "train" mode (documentation and example bash commands provided in the script) or run the script using slurm within an sbatch script. An example with reasonable recources is given in `sbtachTrain_CNN_TM.sh` (example bash command given in script). 
 
 The script prints a lot of information. Among others, after each training, it will print the perfromance on a hold-out test data set. The model with the best perfromance can than be used for further analysis.
-In the manuscript, the DeepSTAR-like architecture with a learning rate of 0.001 was chosen. 
+In the manuscript, the [DeepSTAR](https://colab.research.google.com/drive/1Xgak40TuxWWLh5P5ARf0-4Xo0BcRn0Gd)-like architecture with a learning rate of 0.001 was chosen. 
 
 ### further evaluate CNNs
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
