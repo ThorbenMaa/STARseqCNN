@@ -41,7 +41,7 @@ def one_hot_encode(seq): #taken from https://stackoverflow.com/questions/3426377
 
 #parameters
 sequence_length=198
-learning_rate=[0.001, 0.0001, 0.00001]#0.001#0.01#0.1#0.001
+learning_rate=[0.01, 0.001, 0.0001]
 batch_size=128
 epochs=150
 number_cell_types=12 #also hot encoded below, also needs to be change below when processing tarining and testing data
@@ -49,6 +49,9 @@ number_cell_types=12 #also hot encoded below, also needs to be change below when
 #import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
 df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
+
+#replace 0 with 1 for log transformation later
+df_IDs_reg_labels=df_IDs_reg_labels.replace(0, 1)
 
 #import sequences
 df_IDs_Sequences=pd.read_csv(sys.argv[2], sep=",",low_memory=False)
@@ -100,7 +103,7 @@ df_IDs_seqs_reg_labels['mean_HepG2_untreatedPilot'] = df_IDs_seqs_reg_labels.loc
 df_IDs_seqs_reg_labels_test=df_IDs_seqs_reg_labels.loc[(df_IDs_seqs_reg_labels['ID'].str.contains(str(sys.argv[5])))==True]
 df_IDs_seqs_reg_labels_train=df_IDs_seqs_reg_labels.loc[(df_IDs_seqs_reg_labels['ID'].str.contains(str(sys.argv[5])))==False]
 
-#prepare data sets for model training and testing -> convert to tensors
+#prepare data sets for model training and testing -> convert to tensors + log transform of labels and data type to int 8 of sequences
 #labels test data
 input_label_test=tf.convert_to_tensor([df_IDs_seqs_reg_labels_test["mean_cell_3T3_diff_CTRL"].to_list(),
                                        df_IDs_seqs_reg_labels_test["mean_ccell_3T3_undiff_CTRL"].to_list(),
@@ -117,13 +120,11 @@ input_label_test=tf.convert_to_tensor([df_IDs_seqs_reg_labels_test["mean_cell_3T
                                        
                                     
 ])
-input_label_test=tf.transpose(input_label_test)
 
-#limit label to 400 to exclude outlyiers (arbitrary chosen, just looked at data plots)
-input_label_test= tf.clip_by_value(input_label_test, clip_value_min=0, clip_value_max=400)
-
+#log transform and transpose
+input_label_test=tf.math.log(tf.transpose(input_label_test))
 #sequences test data
-input_seq_test=tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list())
+input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()), tf.int8)
 
 #label train data
 input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list(),
@@ -141,20 +142,21 @@ input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_
                                        
                                     
 ])
-input_label_train=tf.transpose(input_label_train)
 
-#limit label to 400 to exclude outlyiers (arbitrary chosen, just looked at data plots)
-input_label_train= tf.clip_by_value(input_label_train, clip_value_min=0, clip_value_max=400)
+
+#log transform adn transpose
+input_label_train=tf.math.log(tf.transpose(input_label_train))
 
 #sequence train data
-input_seq_train=tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list())
-
+input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list()), tf.int8)
+print(input_seq_train)
 #train or load model
 #train
 if sys.argv[3]=="train":
 
     #iterate over diferent learning rates specified above
     for lr in learning_rate:
+        
         #standard archtecture of max's CNN pipeline (https://github.com/visze/sequence_cnn_models/tree/master)
         model = keras.Sequential([
             keras.layers.InputLayer(input_shape=(sequence_length,4), name="input"),
@@ -197,7 +199,7 @@ if sys.argv[3]=="train":
         
         #quick model evaluation on test data to select models for further evaluation; printed in output of this script
         model.evaluate(input_seq_test, input_label_test, batch_size=batch_size, verbose=2)
-
+        
         #architecture more or less taken from deepstar (https://colab.research.google.com/drive/1Xgak40TuxWWLh5P5ARf0-4Xo0BcRn0Gd#scrollTo=wkq9fhH4wfoD)
         model = keras.Sequential([
             keras.layers.InputLayer(input_shape=(sequence_length,4), name="input"),
