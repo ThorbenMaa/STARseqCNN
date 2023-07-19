@@ -15,6 +15,7 @@ mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 ```
 
 ### load experimental labels and corresponding sequences (will be added upon publication)
+also needs ot be added in the "workflow in comments" section
 
 ### train CNNs
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
