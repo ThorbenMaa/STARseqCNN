@@ -1,5 +1,5 @@
 # STARseqCNN
-This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the *[Kaikkonen Lab]([https://www.markdownguide.org](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/))*. The folder `finalModel` contains the tarined model used for further analysis in the manuscript.
+This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the tarined model used for further analysis in the manuscript.
 
 ## Worklflow
 
