@@ -62,6 +62,9 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 > #clone repo
 > git clone https://github.com/ThorbenMaa/STARseqCNN.git
 >
+> #change into new directory
+> cd STARseqCNN
+>
 > #install dependencies
 > mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 > mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
