@@ -145,23 +145,23 @@ for i in range (0, numberOfSeqs, 1):#iterate over numberOfSeqs
 #print shapes (number of Seqs x seq length x 4)
 print(hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.shape)
 print(seqs_tfmodisco_format.shape)
-
+print("data saved to "+str(os.getcwd()))
 #save contribution scores as npz files
-np.savez('hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz', hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL)
-np.savez('hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz', hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL)
-np.savez('hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz', hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB)
-np.savez('hypothetical_contribution_scores_mean_RAW_CTRL.npz', hypothetical_contribution_scores_mean_RAW_CTRL)
-np.savez('hypothetical_contribution_scores_mean_RAW_IL1B.npz', hypothetical_contribution_scores_mean_RAW_IL1B)
-np.savez('hypothetical_contribution_scores_mean_RAW_TGFB.npz', hypothetical_contribution_scores_mean_RAW_TGFB)
-np.savez('hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz', hypothetical_contribution_scores_mean_TeloHAEC_CTRL)
-np.savez('hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h)
-np.savez('hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h)
-np.savez('hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz', hypothetical_contribution_scores_mean_HASMC_untreatedPilot)
-np.savez('hypothetical_contribution_scores_mean_HASMC_Chol.npz', hypothetical_contribution_scores_mean_HASMC_Chol)
-np.savez('hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz', hypothetical_contribution_scores_mean_HepG2_untreatedPilot)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz', hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz', hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz', hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_CTRL.npz', hypothetical_contribution_scores_mean_RAW_CTRL)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_IL1B.npz', hypothetical_contribution_scores_mean_RAW_IL1B)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_TGFB.npz', hypothetical_contribution_scores_mean_RAW_TGFB)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz', hypothetical_contribution_scores_mean_TeloHAEC_CTRL)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz', hypothetical_contribution_scores_mean_HASMC_untreatedPilot)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HASMC_Chol.npz', hypothetical_contribution_scores_mean_HASMC_Chol)
+np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz', hypothetical_contribution_scores_mean_HepG2_untreatedPilot)
 
 #save sequences as npz file
-np.savez('Sequences.npz', seqs_tfmodisco_format)
+np.savez(str(os.getcwd())+'/Sequences.npz', seqs_tfmodisco_format)
 
 
 
