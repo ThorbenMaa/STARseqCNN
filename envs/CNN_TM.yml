@@ -6,6 +6,7 @@ channels:
   - defaults
 dependencies:
   - python
+  - tensorflow
   - ca-certificates
   - openssl
   - matplotlib
@@ -14,4 +15,3 @@ dependencies:
   - gxx_linux-64
   - pandas
   - scipy
-prefix: /data/gpfs-1/users/tmaass_m/work/miniconda/envs/CNN_TM
