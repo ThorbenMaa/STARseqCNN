@@ -58,7 +58,15 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 
 ## The workflow in comments
 > ```
+> #clone repo
+> git clone https://github.com/ThorbenMaa/STARseqCNN.git
+>
+> #install dependencies
+> mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
+> mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
+> 
 > #train models
+> mamba activate CNN_TM
 > sbatch sbatch_Train_CNN_TM.sh
 > 
 > #further evaluate best model
@@ -68,10 +76,12 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 > sbatch sbatch_ism.sh
 > 
 > #tfmodisco-lite
+> mamba activate modisco_lite
 > wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 > sbatch sbatch_tfmodisco.sh
 > 
 > #sanity check of selected motifs
+> mamba activate CNN_TM
 > python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
 > ```
 >
