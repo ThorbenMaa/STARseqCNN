@@ -56,21 +56,23 @@ Has the CNN really learned motifs that enhance/repress activity in the STARseq e
 ![alt text for screen readers](boxplot_HASMC_CholGGAAAT.svg "Boxplots")
 As you can see, sequences in the data set containing GGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
 
-## The workflow in comments
-```
-#train models
-sbatch sbatch_Train_CNN_TM.sh
+> ## The workflow in comments
+> ```
+> #train models
+> sbatch sbatch_Train_CNN_TM.sh
+> 
+> #further evaluate best model
+> python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8
+> 
+> #ISM
+> sbatch sbatch_ism.sh
+> 
+> #tfmodisco-lite
+> wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+> sbatch sbatch_tfmodisco.sh
+> 
+> #sanity check of selected motifs
+> python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
+> ```
+>
 
-#further evaluate best model
-python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8
-
-#ISM
-sbatch sbatch_ism.sh
-
-#tfmodisco-lite
-wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-sbatch sbatch_tfmodisco.sh
-
-#sanity check of selected motifs
-python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
-```
