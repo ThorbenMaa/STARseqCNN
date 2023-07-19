@@ -20,7 +20,6 @@ Outputs:            Trained CNNs or evalutaion of a pre-trained CNN.
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 import sys
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"]="2" #to supress warnings with loading tf
