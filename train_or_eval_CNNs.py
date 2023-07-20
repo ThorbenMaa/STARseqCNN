@@ -92,7 +92,7 @@ df_IDs_Sequences=df_IDs_Sequences.rename(columns={'name': 'ID'})
 df_IDs_reg_labels=df_IDs_reg_labels.rename(columns={'Oligo': 'ID'})
 df_IDs_seqs_reg_labels=pd.merge(df_IDs_Sequences, df_IDs_reg_labels, on=["ID"])
 
-#average data over replica to generate labels, systematic +1
+#average data over replica to generate labels, systematic +1 to be able to log transform
 #3T3
 df_IDs_seqs_reg_labels['mean_cell_3T3_diff_CTRL'] = df_IDs_seqs_reg_labels.loc[:, ["cell_3T3_diff_CTRL_rep1_2022_12_14", "cell_3T3_diff_CTRL_rep2_2022_12_14", "cell_3T3_diff_CTRL_rep3_2022_12_14", "cell_3T3_diff_CTRL_rep4_2022_12_14"]].mean(axis=1) + 1
 df_IDs_seqs_reg_labels['mean_ccell_3T3_undiff_CTRL'] = df_IDs_seqs_reg_labels.loc[:, ["cell_3T3_undiff_CTRL_rep1_2022_12_14", "cell_3T3_undiff_CTRL_rep2_2022_12_14", "cell_3T3_undiff_CTRL_rep3_2022_12_14", "cell_3T3_undiff_CTRL_rep4_2022_12_14"]].mean(axis=1) + 1
@@ -153,9 +153,9 @@ input_label_test=tf.convert_to_tensor([df_IDs_seqs_reg_labels_test["mean_cell_3T
 #log transform and transpose
 input_label_test=tf.math.log(tf.transpose(input_label_test))
 #sequences test data
-input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()+), tf.int8)
+input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()), tf.int8)
 
-#label train data
+#label train data (all values 2 times because of augmentation)
 input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list(),
                                        df_IDs_seqs_reg_labels_train["mean_ccell_3T3_undiff_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_ccell_3T3_undiff_CTRL"].to_list(),
                                        df_IDs_seqs_reg_labels_train["mean_cell_3T3_undiff_TGFB"].to_list() + df_IDs_seqs_reg_labels_train["mean_cell_3T3_undiff_TGFB"].to_list(),
@@ -176,8 +176,8 @@ input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_
 #log transform adn transpose
 input_label_train=tf.math.log(tf.transpose(input_label_train))
 
-#sequence train data
-input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list() + df_IDs_seqs_reg_labels_train['compSeq one hot encoded']), tf.int8)
+#sequence train data (original sequence + augmented by using complemantary strand sequence)
+input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list() + df_IDs_seqs_reg_labels_train['compSeq one hot encoded'].to_list()), tf.int8)
 
 #train or load model
 #train
