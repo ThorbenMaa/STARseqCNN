@@ -86,9 +86,11 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 > sbatch sbatch_Train_CNN_TM.sh
 > 
 > #further evaluate best model
+> mamba activate CNN_TM
 > python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8
 > 
 > #ISM
+> mamba activate CNN_TM
 > sbatch sbatch_ism.sh
 > 
 > #tfmodisco-lite
