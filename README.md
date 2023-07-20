@@ -17,7 +17,7 @@ mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 ### Load and plot experimental labels and corresponding sequences (will be added upon publication)
 also needs ot be added in the "workflow in comments" section
 
-First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. Download the data using `wget -c xxxx`. Use the script `corr_heatmap_labels.py` (Descripion and example command given in script). The figure will look like this:
+First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. Download the data using `wget -c xxxx`. For getting an idea on the experimental data, use the script `corr_heatmap_labels.py` (Descripion and example command given in script). The script will plot a correlation heatmap. The figure will look like this:
 ![alt text for screen readers](corr_heatmap_exp_labels.svg "correlation heatmap of expermental data")
 
 ### Train CNNs
