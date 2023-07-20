@@ -38,6 +38,18 @@ def one_hot_encode(seq): #taken from https://stackoverflow.com/questions/3426377
     seq2 = [mapping[i] for i in seq]
     return np.eye(4)[seq2]
 
+def complementary(strand): #adapted from https://codereview.stackexchange.com/questions/193766/generating-complementary-dna-sequence
+    complementary_strand = ''
+    for dna in strand:
+        if dna == 'A':
+            complementary_strand += 'T'
+        elif dna == 'T':
+            complementary_strand += 'A'
+        elif dna == 'G':
+            complementary_strand += 'C'
+        elif dna == 'C':
+            complementary_strand += 'G'
+    return complementary_strand
 
 #parameters
 sequence_length=198
@@ -103,6 +115,23 @@ df_IDs_seqs_reg_labels['mean_HepG2_untreatedPilot'] = df_IDs_seqs_reg_labels.loc
 df_IDs_seqs_reg_labels_test=df_IDs_seqs_reg_labels.loc[(df_IDs_seqs_reg_labels['ID'].str.contains(str(sys.argv[5])))==True]
 df_IDs_seqs_reg_labels_train=df_IDs_seqs_reg_labels.loc[(df_IDs_seqs_reg_labels['ID'].str.contains(str(sys.argv[5])))==False]
 
+#add augmentation on training data
+#covert seqs to com seqs and add as new column
+df_IDs_seqs_reg_labels_train['compSeq']=orgSeq_list=df_IDs_seqs_reg_labels_train['enhancer'].apply(complementary)
+
+#convert to list and create one-hot-encoded
+sequence_list=df_IDs_seqs_reg_labels_train['compSeq'].to_list()
+sequences_tok=[]
+
+for i in range (0, len(sequence_list), 1): 
+    if  len(sequence_list[i])==sequence_length:
+        sequences_tok.append(one_hot_encode(sequence_list[i]))
+    else:
+        sequences_tok.append(np.nan)
+
+#add one-hot-encoded to data frame
+df_IDs_seqs_reg_labels_train['compSeq one hot encoded'] = sequences_tok
+
 #prepare data sets for model training and testing -> convert to tensors + log transform of labels and data type to int 8 of sequences
 #labels test data
 input_label_test=tf.convert_to_tensor([df_IDs_seqs_reg_labels_test["mean_cell_3T3_diff_CTRL"].to_list(),
@@ -124,21 +153,21 @@ input_label_test=tf.convert_to_tensor([df_IDs_seqs_reg_labels_test["mean_cell_3T
 #log transform and transpose
 input_label_test=tf.math.log(tf.transpose(input_label_test))
 #sequences test data
-input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()), tf.int8)
+input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()+), tf.int8)
 
 #label train data
-input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_ccell_3T3_undiff_CTRL"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_cell_3T3_undiff_TGFB"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_RAW_CTRL"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_RAW_IL1B"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_RAW_TGFB"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_CTRL"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_24h"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_6h"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_HASMC_untreatedPilot"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_HASMC_Chol"].to_list(),
-                                       df_IDs_seqs_reg_labels_train["mean_HepG2_untreatedPilot"].to_list()
+input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_cell_3T3_diff_CTRL"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_ccell_3T3_undiff_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_ccell_3T3_undiff_CTRL"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_cell_3T3_undiff_TGFB"].to_list() + df_IDs_seqs_reg_labels_train["mean_cell_3T3_undiff_TGFB"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_RAW_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_RAW_CTRL"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_RAW_IL1B"].to_list() + df_IDs_seqs_reg_labels_train["mean_RAW_IL1B"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_RAW_TGFB"].to_list() + df_IDs_seqs_reg_labels_train["mean_RAW_TGFB"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_CTRL"].to_list() + df_IDs_seqs_reg_labels_train["mean_TeloHAEC_CTRL"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_24h"].to_list() + df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_24h"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_6h"].to_list() + df_IDs_seqs_reg_labels_train["mean_TeloHAEC_IL1b_6h"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_HASMC_untreatedPilot"].to_list() + df_IDs_seqs_reg_labels_train["mean_HASMC_untreatedPilot"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_HASMC_Chol"].to_list() + df_IDs_seqs_reg_labels_train["mean_HASMC_Chol"].to_list(),
+                                       df_IDs_seqs_reg_labels_train["mean_HepG2_untreatedPilot"].to_list() + df_IDs_seqs_reg_labels_train["mean_HepG2_untreatedPilot"].to_list()
                                        
                                     
 ])
@@ -148,7 +177,7 @@ input_label_train=tf.convert_to_tensor([df_IDs_seqs_reg_labels_train["mean_cell_
 input_label_train=tf.math.log(tf.transpose(input_label_train))
 
 #sequence train data
-input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list()), tf.int8)
+input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list() + df_IDs_seqs_reg_labels_train['compSeq one hot encoded']), tf.int8)
 
 #train or load model
 #train
