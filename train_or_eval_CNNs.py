@@ -149,7 +149,7 @@ input_label_train=tf.math.log(tf.transpose(input_label_train))
 
 #sequence train data
 input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list()), tf.int8)
-print(input_seq_train)
+
 #train or load model
 #train
 if sys.argv[3]=="train":
