@@ -14,8 +14,11 @@ mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 ```
 
-### Load experimental labels and corresponding sequences (will be added upon publication)
+### Load and plot experimental labels and corresponding sequences (will be added upon publication)
 also needs ot be added in the "workflow in comments" section
+
+First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. Download the data using `wget -c xxxx`. Use the script `corr_heatmap_labels.py` (Descripion and example command given in script). The figure will look like this:
+![alt text for screen readers](corr_heatmap_exp_labels.svg "correlation heatmap of expermental data")
 
 ### Train CNNs
 First, activate the `CNN_TM` environment using `mamba activate CNN_TM`.
@@ -73,8 +76,10 @@ As you can see, sequences in the data set containing GGAAAT tend to have a highe
 > mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 > mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 >
-> #download data
+> #download and plot data
+> mamba activate CNN_TM
 > wget blablabla.com
+> python corr_heatmap_labels.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv
 > 
 > #train models
 > mamba activate CNN_TM
