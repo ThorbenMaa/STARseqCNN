@@ -7,8 +7,9 @@ channels:
 dependencies:
   - h5py
   - numpy
-  - python[version='<3.11']
-  - pip
+  - python=3.10.12=hd12c33a_0_cpython
+  - pip=23.1.2=pyhd8ed1ab_0
+  - meme
   - ca-certificates
   - openssl
   - pip:
