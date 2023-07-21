@@ -11,7 +11,7 @@
 #  Request 50GB of memory (hard constraint):
 #SBATCH --mem=50GB
 #  Request one hour maximal execution time (hard constraint):
-#SBATCH --time=0-08:00:00
+#SBATCH --time=0-48:00:00
 #SBATCH --job-name=TrainAndTest
 
 
