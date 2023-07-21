@@ -57,7 +57,7 @@ The motifs the model has learned can look like this:
 ![alt text for screen readers](pos_patterns.pattern_0.cwm.fwd.png "enhancer motif learned by CNN")
 
 In this case, the motif matches a known motif from the JASPAr data base:
-![alt text for screen readers](MA1508.1.png "MA1508.1 motif from JASPAR data base")
+![alt text for screen readers](MA1950.1_FLI1__FOXI1.png "MA1950.1_FLI1__FOXI1 motif from JASPAR data base")
 
 ### Sanity check
 Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
