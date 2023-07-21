@@ -56,7 +56,7 @@ def complementary(strand): #adapted from https://codereview.stackexchange.com/qu
 
 #parameters
 sequence_length=198
-learning_rate=[0.001]#, 0.001, 0.0001]
+learning_rate=[0.01, 0.001, 0.0001]
 batch_size=128
 epochs=100
 number_cell_types=12 #also hot encoded below, also needs to be change below when processing tarining and testing data
@@ -205,7 +205,7 @@ if sys.argv[3]=="train":
 
     #iterate over diferent learning rates specified above
     for lr in learning_rate:
-        """
+        
         #standard archtecture of max's CNN pipeline (https://github.com/visze/sequence_cnn_models/tree/master)
         random.seed(1234)#to make training reproducable,
         np.random.seed(1234)#to make training reproducable, 
@@ -247,7 +247,7 @@ if sys.argv[3]=="train":
         
         #quick model evaluation on test data to select models for further evaluation; printed in output of this script
         model.evaluate(input_seq_test, input_label_test, batch_size=batch_size, verbose=2)
-        """
+        
         #architecture more or less taken from deepstar (https://colab.research.google.com/drive/1Xgak40TuxWWLh5P5ARf0-4Xo0BcRn0Gd#scrollTo=wkq9fhH4wfoD)
         random.seed(seed_value)#to make training reproducable,
         np.random.seed(seed_value)#to make training reproducable,
