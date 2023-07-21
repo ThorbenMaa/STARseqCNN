@@ -25,7 +25,7 @@ import sys
 from scipy import stats
 import random
 
-motivsToCheck=["GGAAAT", "AAAA"]
+motivsToCheck=["ACAGGAAAT", "AAAA"]
 
 #define cell type
 cellType=sys.argv[3]
