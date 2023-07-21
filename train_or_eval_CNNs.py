@@ -1,10 +1,12 @@
 """
-Description:        This script has two modes. The "train" mode trains different CNNs on STARseq data provided by the Kaikkonen Lab using two different architectures and several different learning rates. 
+Description:        This script has two modes. The "train" mode trains different CNNs on STARseq data provided by the Kaikkonen Lab using two different architectures and several different learning rates, with and without augmentation. 
                     Learning rates can be specified using the `learning_rate` array. The model is evaluated on a hold-out test data set. The "load" mode loads a pre-trained model and evaluates it on a
                     hold-out test data set. Pearson correlations between predicted and experimentally determined activities are calculated and scatter plots are generated.
 
 Inputs:             Input 1 are labels for model training and evaluation. Input 2 are sequences for  model training and evaluation. Input 3 defines the mode (see above) and is either "train" or "load".
-                    Input 4 is a pre-trained model that should be evaluated. Only important in the "load" mode of this script. Input 5 is the hold-out chromosme for testing. 
+                    Input 4 is a pre-trained model that should be evaluated. Only important in the "load" mode of this script. Input 5 is the hold-out chromosme for testing. Input 6 has to be "use_aug"
+                    to use augmentation for model training or something else if no augmentation should be used. 
+                    
 
 further parameters: can be specified in the parameters section of this script. 
 
