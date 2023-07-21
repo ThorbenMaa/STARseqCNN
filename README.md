@@ -62,7 +62,8 @@ In this case, the motif matches a known motif from the JASPAr data base:
 ### Sanity check
 Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
 ![alt text for screen readers](boxplot_HASMC_CholACAGGAAAT.svg "Boxplots")
-As you can see, sequences in the data set containing GGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
+
+As you can see, sequences in the data set containing ACAGGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
 
 ## The workflow in bash commands
 > ```
