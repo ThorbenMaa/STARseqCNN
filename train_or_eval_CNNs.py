@@ -284,7 +284,7 @@ if sys.argv[3]=="train":
         
         #save model
         print("save model"+str(lr))
-        model.save("test_CNN_StarSeq_model_Minna_deepSTAR_lr"+str(lr)+str(sys.argv[6]))
+        model.save("CNN_StarSeq_model_Minna_deepSTAR_lr"+str(lr)+str(sys.argv[6]))
 
         #evaluate model on test data
         model.evaluate(input_seq_test, input_label_test, batch_size=batch_size, verbose=2)
