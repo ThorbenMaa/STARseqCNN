@@ -4,11 +4,11 @@ Description:        Script loads STARseq data provided by the Kaikkonen lab. One
                     The CNN scores and corresponding sequences are saved as .npz files and can be used by the "modisco_TM.py" script.
 
 Inputs:             Input 1 are labels also used for model training and evaluation. Input 2 are sequences also used for model training and evaluation. Both files are required to make sure that only sequences
-                    are used for that also experimental data is avalable (the ID columns of the respective files are merged). Input 3 is a pre-trained model that should be intrpreted.
+                    are used for that also experimental data is avalable (the ID columns of the respective files are merged). Input 3 is a pre-trained model that should be intrpreted. input 4 like input 1
 
 Outputs:            npz files with one hot encoded sequences following the ISM approach (see above) and with raw prediction scores of the CNN given as Input 1. 
 
-example command:    python ism_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv CNN_StarSeq_model_Minna_deepSTAR_lr0.001
+example command:    python ism_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv CNN_StarSeq_model_Minna_deepSTAR_lr0.001 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
 
 
 """
@@ -38,6 +38,11 @@ batch_size=128
 
 #import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
+df_IDs_reg_labels2=pd.read_csv(sys.argv[4], sep="\t", decimal=',', low_memory=False)
+
+df_IDs_reg_labels = pd.concat([df_IDs_reg_labels, df_IDs_reg_labels2], axis=0)
+
+
 df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
 
 #import sequences
