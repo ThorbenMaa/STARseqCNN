@@ -1,4 +1,7 @@
 # STARseqCNN
+
+2beupdated: santity check and heatmap scripts
+
 This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("CNN_StarSeq_model_Minna_deepSTAR_lr0.001")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
 
 ## Worklflow CNN training, evaluation, and interpretation
@@ -65,6 +68,7 @@ Has the CNN really learned motifs that enhance/repress activity in the STARseq e
 As you can see, sequences in the data set containing ACAGGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
 
 ## The workflow in bash commands
+2beupdated: santity check and heatmap scripts
 > ```
 > #clone repo
 > git clone https://github.com/ThorbenMaa/STARseqCNN.git
@@ -87,7 +91,7 @@ As you can see, sequences in the data set containing ACAGGAAAT tend to have a hi
 > 
 > #further evaluate best model
 > mamba activate CNN_TM
-> python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load CNN_StarSeq_model_Minna_deepSTAR_lr0.001 chr8
+> python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load bla chr8 no_aug 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
 > 
 > #ISM
 > mamba activate CNN_TM
