@@ -62,10 +62,13 @@ In this case, the motif matches a known motif from the JASPAr data base:
 ![alt text for screen readers](MA1950.1_FLI1__FOXI1.png "MA1950.1_FLI1__FOXI1 motif from JASPAR data base")
 
 ### Sanity check
-Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
+Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity within one cell type of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
 ![alt text for screen readers](boxplot_HASMC_CholACAGGAAAT.svg "Boxplots")
 
 As you can see, sequences in the data set containing ACAGGAAAT tend to have a higher experimental activity compared to sequences that don't contain this motif.
+
+You can also use the script `sanity_check_modisco_results.py` to plot the activity of a (or multiple) particular motifs across all cell types and experimental set ups. This may help you to decide whether a motif of interest acts in a cell tyoe specific way. The rsult will look like this:
+![alt text for screen readers](boxplot_HASMC_CholACAGGAAAT.svg "Boxplots")
 
 ## The workflow in bash commands
 2beupdated: santity check and heatmap scripts
