@@ -1,6 +1,6 @@
 # STARseqCNN
 
-2beupdated: santity check and heatmap scripts + final model is the one with "all-seq"-> also needs to be updated
+2beupdated: santity check and heatmap scripts + final model is the one with "all-seq"-> also needs to be updated; variant effects haplo types docu ind readme
 
 This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("CNN_StarSeq_model_Minna_deepSTAR_lr0.001")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
 
