@@ -7,7 +7,7 @@ Input:                  Input 1 are labels (experimental activities). Input 2 ar
 
 Outpu:                  Boxplots for activities with and without motifs of interest
 
-example bash command:   python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
+example bash command:   python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt HASMC_Chol
 
 """
 
@@ -28,10 +28,14 @@ import random
 motivsToCheck=["ACAGGAAAT", "AAAA"]
 
 #define cell type
-cellType=sys.argv[3]
+cellType=sys.argv[4]
 
 #import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
+df_IDs_reg_labels2=pd.read_csv(sys.argv[3], sep="\t", decimal=',', low_memory=False)
+
+df_IDs_reg_labels = pd.concat([df_IDs_reg_labels, df_IDs_reg_labels2], axis=0)
+
 df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
 
 #import sequences
