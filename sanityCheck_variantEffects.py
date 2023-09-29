@@ -121,9 +121,9 @@ df_IDs_seqs_reg_labels['mean_HASMC_Chol'] = df_IDs_seqs_reg_labels.loc[:, ["HASM
 #HepG2
 df_IDs_seqs_reg_labels['mean_HepG2_untreatedPilot'] = df_IDs_seqs_reg_labels.loc[:, ["HepG2_untreatedPilot_rep1", "HepG2_untreatedPilot_rep2", "HepG2_untreatedPilot_rep3"]].mean(axis=1) + 1 / df_IDs_seqs_reg_labels['mean_input2022Dec']
 
-print (df_IDs_seqs_reg_labels)
+#print (df_IDs_seqs_reg_labels)
 df_IDs_seqs_reg_labels=df_IDs_seqs_reg_labels.sort_values(by=["ID"])
-print (df_IDs_seqs_reg_labels)
+#print (df_IDs_seqs_reg_labels)
 
 
 #initalize output df
@@ -239,10 +239,16 @@ df_diff["diff_activity mean_HASMC_untreatedPilot"]=df_diff["diff_activity mean_H
 df_diff["diff_activity mean_HASMC_Chol"]=df_diff["diff_activity mean_HASMC_Chol"].abs()
 df_diff["diff_activity mean_HepG2_untreatedPilot"]=df_diff["diff_activity mean_HepG2_untreatedPilot"].abs()
 
-#print (df_diff)
+
+print("before and afte drop nan")
+print (df_diff.shape[0])
+df_diff=df_diff.dropna()
+print (df_diff.shape[0])
 
 
 #drop duplicates (weil sonst werte dopplet vorkommen, da a-b == b-a bei abs values). Hier koennte man auch alle machen bei subset, aber wahrscheinlichkeit bei 5 zufaellig gleich zu sein ist schon sehr klein
+print("before and after drop duplicates")
+print (df_diff)
 df_diff=df_diff.drop_duplicates(subset=["diff_activity mean_cell_3T3_diff_CTRL", "diff_activity mean_ccell_3T3_undiff_CTRL", "diff_activity mean_cell_3T3_undiff_TGFB", "diff_activity mean_RAW_CTRL", "diff_activity mean_RAW_IL1B"])
 print (df_diff)
 
@@ -255,41 +261,58 @@ elif sys.argv[6]=="all":
 else:
     print("ERRROOROROROROR")
 
-#experimental differences ref and alt
-input_label_test=tf.convert_to_tensor([df_diff["diff_activity mean_cell_3T3_diff_CTRL"].to_list(),
-                                    df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"].to_list(),
-                                    df_diff["diff_activity mean_cell_3T3_undiff_TGFB"].to_list(),
-                                    df_diff["diff_activity mean_RAW_CTRL"].to_list(),
-                                    df_diff["diff_activity mean_RAW_IL1B"].to_list(),
-                                    df_diff["diff_activity mean_RAW_TGFB"].to_list(),
-                                    df_diff["diff_activity mean_TeloHAEC_CTRL"].to_list(),
-                                    df_diff["diff_activity mean_TeloHAEC_IL1b_24h"].to_list(),
-                                    df_diff["diff_activity mean_TeloHAEC_IL1b_6h"].to_list(),
-                                    df_diff["diff_activity mean_HASMC_untreatedPilot"].to_list(),
-                                    df_diff["diff_activity mean_HASMC_Chol"].to_list(),
-                                    df_diff["diff_activity mean_HepG2_untreatedPilot"].to_list()                                    
+#experimental differences ref and alt tensor
+input_label_test=tf.convert_to_tensor([df_diff_test["diff_activity mean_cell_3T3_diff_CTRL"].to_list(),
+                                    df_diff_test["diff_activity mean_ccell_3T3_undiff_CTRL"].to_list(),
+                                    df_diff_test["diff_activity mean_cell_3T3_undiff_TGFB"].to_list(),
+                                    df_diff_test["diff_activity mean_RAW_CTRL"].to_list(),
+                                    df_diff_test["diff_activity mean_RAW_IL1B"].to_list(),
+                                    df_diff_test["diff_activity mean_RAW_TGFB"].to_list(),
+                                    df_diff_test["diff_activity mean_TeloHAEC_CTRL"].to_list(),
+                                    df_diff_test["diff_activity mean_TeloHAEC_IL1b_24h"].to_list(),
+                                    df_diff_test["diff_activity mean_TeloHAEC_IL1b_6h"].to_list(),
+                                    df_diff_test["diff_activity mean_HASMC_untreatedPilot"].to_list(),
+                                    df_diff_test["diff_activity mean_HASMC_Chol"].to_list(),
+                                    df_diff_test["diff_activity mean_HepG2_untreatedPilot"].to_list()                                    
 ])
 
-#log transform and transpose
-input_label_test=tf.math.log(tf.transpose(input_label_test))
+# no log transform but transpose. the model calculates log transformed activities. The solution here is to back transform the output of the model. (lg(a)-lg(b) != lg(a-b)!!)
+input_label_test=tf.transpose(input_label_test)
+print("diff tensor (label):")
+print (input_label_test)
+#input_label_test=tf.math.log(tf.transpose(input_label_test))
 
 #sequences test data1
 input_seq_test1=tf.cast(tf.convert_to_tensor(df_diff_test["Seq-hot-enc1"].to_list()), tf.int8)
+print("seq 1 tensor:")
 print(input_seq_test1)
 
 #sequences test data2
 input_seq_test2=tf.cast(tf.convert_to_tensor(df_diff_test["Seq-hot-enc2"].to_list()), tf.int8)
+print("seq 2 tensor:")
+print(input_seq_test2)
+
 
 model=keras.models.load_model(str(sys.argv[4]))
 
 #calculate predicted labels1
 predictions1=model.predict(input_seq_test1, batch_size=batch_size, verbose=2)
+print("predictions 1 tensor before and after exp transformation:")
+print(predictions1)
+predictions1=tf.math.exp(predictions1)
+print(predictions1)
 
 #calculate predicted labels2
 predictions2=model.predict(input_seq_test2, batch_size=batch_size, verbose=2)
+print("predictions 2 tensor before and after exp transformation:")
+print(predictions2)
+predictions2=tf.math.exp(predictions2)
+print(predictions2)
 
-#calculate diff between ref seq and alt seq
-predictions_diff=predictions1-predictions2
+#calculate diff between ref seq and alt seq and take abs values
+predictions_diff=tf.abs(predictions1-predictions2)
+print("predictions diff tensor:")
+print(predictions_diff)
 
 #correlations of predicted and experimental labels for different cell types
 print(stats.pearsonr(predictions_diff[:,0], input_label_test[:,0]))
