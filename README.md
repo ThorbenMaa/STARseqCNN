@@ -2,7 +2,7 @@
 
 2beupdated: santity check and heatmap scripts + final model is the one with "all-seq"-> also needs to be updated; variant effects haplo types docu ind readme
 
-This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("CNN_StarSeq_model_Minna_deepSTAR_lr0.001")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
+This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
 
 ## Worklflow CNN training, evaluation, and interpretation
 
@@ -73,47 +73,57 @@ You can also use the script `sanity_check_modisco_results_cellTypeComp.py` to pl
 ![alt text for screen readers](boxplot_AGGCCT.svg "Boxplots")
 
 As you can see, the AGGCCT motif appears to be specific for some cell types and experimental set ups, but not for others.
+
+You can also calculate the correlations of the difference in experimental activity measured for all sequences and their haplotypes and the corresponding predicted activity differences by using the script `sanityCheck_variantEffects.py`. Example commands are given in the script. You can either use the entire data set or the test data set only. To make use of slurm, an examplary script is given with `sbatch_sanityCheck_variantEffects.sh`.
+
 ## The workflow in bash commands
 2beupdated: santity check and heatmap scripts
 > ```
-> #clone repo
+> # clone repo
 > git clone https://github.com/ThorbenMaa/STARseqCNN.git
 >
-> #change into new directory
+> # change into new directory
 > cd STARseqCNN
 >
-> #install dependencies
+> # install dependencies
 > mamba env create --name CNN_TM --file=./envs/CNN_TM.yml
 > mamba env create --name modisco_lite --file=./envs/modisco_lite.yml
 >
-> #download and plot data
+> # download and plot data
 > mamba activate CNN_TM
 > wget blablabla.com
 > python corr_heatmap_labels.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv
 > 
-> #train models
+> # train models
 > mamba activate CNN_TM
 > sbatch sbatch_Train_CNN_TM.sh
+>
+> # or use final model given in this repository
+> mv finalModel/allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug
 > 
-> #further evaluate best model
+> # further evaluate best model
 > mamba activate CNN_TM
 > python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv load allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug chr8 no_aug 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
 > 
-> #ISM
+> # ISM
 > mamba activate CNN_TM
 > sbatch sbatch_ism.sh
 > 
-> #tfmodisco-lite
+> # tfmodisco-lite
 > mamba activate modisco_lite
 > wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
 > cat JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt | awk '{{if ($1=="MOTIF") {{print $1,$2"_"$3,$3}} else {{print $0}}}}' > JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
 > sbatch sbatch_tfmodisco.sh
 > 
-> #sanity check of selected motifs within one experimental set up
+> # sanity check of selected motifs within one experimental set up
 > mamba activate CNN_TM
 > python sanity_check_modisco_results.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv HASMC_Chol
->#or within all set-ups
+>
+> # ...or within all set-ups
 >python sanity_check_modisco_results_cellTypeComp.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
+>
+> # ...or by looking at haplotype differences in the entire training data set
+> sbatch sbatch_sbatch_sanityCheck_variantEffects.sh
 > ```
 >
 
