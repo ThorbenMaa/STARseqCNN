@@ -10,7 +10,8 @@ Inputs:             Input 1 are labels for model training and evaluation. Input 
 
 further parameters: can be specified in the parameters section of this script. 
 
-Example commands:   `python sanityCheck_variantEffects.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug chr8 all`
+Example commands:   python sanityCheck_variantEffects.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug chr8 all
+                    python sanityCheck_variantEffects.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug chr8 test_only
                     
 Outputs:            Trained CNNs or evalutaion of a pre-trained CNN.
 
