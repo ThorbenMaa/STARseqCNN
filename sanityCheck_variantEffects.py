@@ -210,22 +210,21 @@ for i in tqdm(range (len(df_IDs_seqs_reg_labels_list))):#tqdm([0, len(df_IDs_seq
     if i==2:
         break
     """
-#calc diff
-#print (df_diff)
-df_diff["diff_activity mean_cell_3T3_diff_CTRL"]=df_diff["mean_cell_3T3_diff_CTRL1"] - df_diff["mean_cell_3T3_diff_CTRL2"]
-df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"]=df_diff["mean_ccell_3T3_undiff_CTRL1"] - df_diff["mean_ccell_3T3_undiff_CTRL2"]
-df_diff["diff_activity mean_cell_3T3_undiff_TGFB"]=df_diff["mean_cell_3T3_undiff_TGFB1"] - df_diff["mean_cell_3T3_undiff_TGFB2"]
-df_diff["diff_activity mean_RAW_CTRL"]=df_diff["mean_RAW_CTRL1"] - df_diff["mean_RAW_CTRL2"]
-df_diff["diff_activity mean_RAW_IL1B"]=df_diff["mean_RAW_IL1B1"] - df_diff["mean_RAW_IL1B2"]
-df_diff["diff_activity mean_RAW_TGFB"]=df_diff["mean_RAW_TGFB1"] - df_diff["mean_RAW_TGFB2"]
-df_diff["diff_activity mean_TeloHAEC_CTRL"]=df_diff["mean_TeloHAEC_CTRL1"] - df_diff["mean_TeloHAEC_CTRL2"]
-df_diff["diff_activity mean_TeloHAEC_IL1b_24h"]=df_diff["mean_TeloHAEC_IL1b_24h1"] - df_diff["mean_TeloHAEC_IL1b_24h2"]
-df_diff["diff_activity mean_TeloHAEC_IL1b_6h"]=df_diff["mean_TeloHAEC_IL1b_6h1"] - df_diff["mean_TeloHAEC_IL1b_6h2"]
-df_diff["diff_activity mean_HASMC_untreatedPilot"]=df_diff["mean_HASMC_untreatedPilot1"] - df_diff["mean_HASMC_untreatedPilot2"]
-df_diff["diff_activity mean_HASMC_Chol"]=df_diff["mean_HASMC_Chol1"] - df_diff["mean_HASMC_Chol2"]
-df_diff["diff_activity mean_HepG2_untreatedPilot"]=df_diff["mean_HepG2_untreatedPilot1"] - df_diff["mean_HepG2_untreatedPilot2"]
+#calc diff of log transformed activities (because output of model is also log transformed)
+df_diff["diff_activity mean_cell_3T3_diff_CTRL"]=np.log(df_diff["mean_cell_3T3_diff_CTRL1"]) - np.log(df_diff["mean_cell_3T3_diff_CTRL2"])
+df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"]=np.log(df_diff["mean_ccell_3T3_undiff_CTRL1"]) - np.log(df_diff["mean_ccell_3T3_undiff_CTRL2"])
+df_diff["diff_activity mean_cell_3T3_undiff_TGFB"]=np.log(df_diff["mean_cell_3T3_undiff_TGFB1"]) - np.log(df_diff["mean_cell_3T3_undiff_TGFB2"])
+df_diff["diff_activity mean_RAW_CTRL"]=np.log(df_diff["mean_RAW_CTRL1"]) - np.log(df_diff["mean_RAW_CTRL2"])
+df_diff["diff_activity mean_RAW_IL1B"]=np.log(df_diff["mean_RAW_IL1B1"]) - np.log(df_diff["mean_RAW_IL1B2"])
+df_diff["diff_activity mean_RAW_TGFB"]=np.log(df_diff["mean_RAW_TGFB1"]) - np.log(df_diff["mean_RAW_TGFB2"])
+df_diff["diff_activity mean_TeloHAEC_CTRL"]=np.log(df_diff["mean_TeloHAEC_CTRL1"]) - np.log(df_diff["mean_TeloHAEC_CTRL2"])
+df_diff["diff_activity mean_TeloHAEC_IL1b_24h"]=np.log(df_diff["mean_TeloHAEC_IL1b_24h1"]) - np.log(df_diff["mean_TeloHAEC_IL1b_24h2"])
+df_diff["diff_activity mean_TeloHAEC_IL1b_6h"]=np.log(df_diff["mean_TeloHAEC_IL1b_6h1"]) - np.log(df_diff["mean_TeloHAEC_IL1b_6h2"])
+df_diff["diff_activity mean_HASMC_untreatedPilot"]=np.log(df_diff["mean_HASMC_untreatedPilot1"]) - np.log(df_diff["mean_HASMC_untreatedPilot2"])
+df_diff["diff_activity mean_HASMC_Chol"]=np.log(df_diff["mean_HASMC_Chol1"]) - np.log(df_diff["mean_HASMC_Chol2"])
+df_diff["diff_activity mean_HepG2_untreatedPilot"]=np.log(df_diff["mean_HepG2_untreatedPilot1"]) - np.log(df_diff["mean_HepG2_untreatedPilot2"])
 
-#use abs value
+#use abs value (important to be able to drop duplicates)
 df_diff["diff_activity mean_cell_3T3_diff_CTRL"]=df_diff["diff_activity mean_cell_3T3_diff_CTRL"].abs()
 df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"]=df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"].abs()
 df_diff["diff_activity mean_cell_3T3_undiff_TGFB"]=df_diff["diff_activity mean_cell_3T3_undiff_TGFB"].abs()
@@ -276,7 +275,7 @@ input_label_test=tf.convert_to_tensor([df_diff_test["diff_activity mean_cell_3T3
                                     df_diff_test["diff_activity mean_HepG2_untreatedPilot"].to_list()                                    
 ])
 
-# no log transform but transpose. the model calculates log transformed activities. The solution here is to back transform the output of the model. (lg(a)-lg(b) != lg(a-b)!!)
+# no log transform here but transpose. the model calculates log transformed activities. The solution here is to log transform the before calculating the difference, see above. (lg(a)-lg(b) != lg(a-b)!!)
 input_label_test=tf.transpose(input_label_test)
 print("diff tensor (label):")
 print (input_label_test)
@@ -299,15 +298,15 @@ model=keras.models.load_model(str(sys.argv[4]))
 predictions1=model.predict(input_seq_test1, batch_size=batch_size, verbose=2)
 print("predictions 1 tensor before and after exp transformation:")
 print(predictions1)
-predictions1=tf.math.exp(predictions1)
-print(predictions1)
+#predictions1=tf.math.exp(predictions1)
+#print(predictions1)
 
 #calculate predicted labels2
 predictions2=model.predict(input_seq_test2, batch_size=batch_size, verbose=2)
 print("predictions 2 tensor before and after exp transformation:")
 print(predictions2)
-predictions2=tf.math.exp(predictions2)
-print(predictions2)
+#predictions2=tf.math.exp(predictions2)
+#print(predictions2)
 
 #calculate diff between ref seq and alt seq and take abs values
 predictions_diff=tf.abs(predictions1-predictions2)
