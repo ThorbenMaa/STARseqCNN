@@ -291,7 +291,7 @@ input_seq_test2=tf.cast(tf.convert_to_tensor(df_diff_test["Seq-hot-enc2"].to_lis
 print("seq 2 tensor:")
 print(input_seq_test2)
 
-
+#load model
 model=keras.models.load_model(str(sys.argv[4]))
 
 #calculate predicted labels1
