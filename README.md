@@ -44,11 +44,13 @@ First, activate the `modisco_lite` environment using `mamba activate modisco_lit
 Use the script `mosidco_TM.py` with the .npz files generated in the previous step by the `ism_TM.py` script as inputs (documentation and example bash commands provided in the respective scripts). The script will create a tfmodisco-lite result.h5 file. 
 You can create tfmodisco-lite reports from this results file using e.g.:
 ```
-#Download JASPAR
+# Download JASPAR
 wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
-#make JASPAR file nice so that the TF names appear in the final report (credits to Max Schubach, BIH, Germany)
+
+# make JASPAR file nice so that the TF names appear in the final report (credits to Max Schubach, BIH, Germany)
 cat JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt | awk '{{if ($1=="MOTIF") {{print $1,$2"_"$3,$3}} else {{print $0}}}}' > JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
-#create reports
+
+# create reports
 modisco report -i modisco_resultshypothetical_contribution_scores_mean_HASMC_Chol.npz.h5 -o report_HASMC_chol/ -s report_HASMC_Chol/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
 ```
 You can also use an sbatch script provided in `sbatch_tfmodisco.sh` to make use of slurm. Here, all commands for generating tfmodisco results and reports used for the analysis of the manuscript are listed. 
