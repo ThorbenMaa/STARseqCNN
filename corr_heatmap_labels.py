@@ -5,7 +5,7 @@ Inputs:             Input 1 are labels for model training and evaluation. Input 
 
 further parameters: can be specified in the parameters section of this script. 
 
-Example commands:   python corr_heatmap_labels.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv
+Example commands:   python corr_heatmap_labels.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
 
 Outputs:            correlation heatmap and correlation csv file
 
@@ -23,9 +23,13 @@ import numpy as np
 sequence_length=198
 
 #import labels
+#import labels
 df_IDs_reg_labels=pd.read_csv(sys.argv[1], sep="\t", decimal=',', low_memory=False)
-df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
+df_IDs_reg_labels2=pd.read_csv(sys.argv[3], sep="\t", decimal=',', low_memory=False)
 
+df_IDs_reg_labels = pd.concat([df_IDs_reg_labels, df_IDs_reg_labels2], axis=0)
+
+df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
 #replace 0 with 1 for log transformation later
 df_IDs_reg_labels=df_IDs_reg_labels.replace(0, 1)
 
