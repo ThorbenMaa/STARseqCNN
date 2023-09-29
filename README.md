@@ -120,7 +120,7 @@ You can also calculate the correlations of the difference in experimental activi
 > # ...or within all set-ups
 >python sanity_check_modisco_results_cellTypeComp.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
 >
-> # ...or by looking at haplotype differences in the entire training data set
+> # ...or by looking at haplotype differences in the entire data set (or only in the test data set, see example commands in sanityCheck_variantEffects.py)
 > sbatch sbatch_sbatch_sanityCheck_variantEffects.sh
 > ```
 >
