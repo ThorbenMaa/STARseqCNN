@@ -14,5 +14,7 @@ dependencies:
   - gxx_linux-64
   - pandas
   - scipy
+  - click
+  - html5lib
   - pip:
       - tensorflow
