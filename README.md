@@ -1,4 +1,4 @@
-# STARseqCNN
+# STARRseqCNN (README needs update!!)
 
 This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
 
