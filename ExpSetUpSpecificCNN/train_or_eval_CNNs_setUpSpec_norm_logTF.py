@@ -2,15 +2,14 @@
 Description:        This script has two modes. The "train" mode trains different CNNs on STARseq data provided by the Kaikkonen Lab using two different architectures and several different learning rates, with and without augmentation. 
                     Learning rates can be specified using the `learning_rate` array. The model is evaluated on a hold-out test data set. The "load" mode loads a pre-trained model and evaluates it on a
                     hold-out test data set. Pearson correlations between predicted and experimentally determined activities are calculated and scatter plots are generated.
-                    The aim is to train a diff CNN that learns to predict differences in LOG TRANSFORMED STARRseq activities for two different experimental set ups
+                    The aim is training a difference CNN that learns to predict LOG TRANSFORMED AND STANDARDIZED differences in STARRseq activites between 2 experimental set ups
 
 Inputs:             see click
-                    
 
 further parameters: can be specified in the parameters section of this script. 
 
 
-Outputs:            Trained CNNs or evalutaion of a pre-trained CNN.
+Outputs:            Trained diffCNNs or evalutaion of a pre-trained diffCNN.
 
 Command:            python ExpSetUpSpecificCNN/train_or_eval_CNNs_setUpSpec.py --counts1 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt  --counts2 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt  --seqs starrseq-all-final-toorder_oligocomposition.csv  --mode load  --holdOut chr8  --useAug use_aug  --model allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01use_augsetUpSpec\('mean_HepG2_untreatedPilot',\ 'mean_TeloHAEC_CTRL'\)
 
@@ -172,7 +171,7 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
     #HepG2
     df_IDs_seqs_reg_labels['mean_HepG2_untreatedPilot'] = df_IDs_seqs_reg_labels.loc[:, ["HepG2_untreatedPilot_rep1", "HepG2_untreatedPilot_rep2", "HepG2_untreatedPilot_rep3"]].mean(axis=1)  + 1 / df_IDs_seqs_reg_labels['mean_input2022Dec']
 
-    # select set-ups to compare
+
 
 
     #split data to train and test data
@@ -199,16 +198,21 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
         #cell_types=["mean_cell_3T3_diff_CTRL", "mean_ccell_3T3_undiff_CTRL", "mean_cell_3T3_undiff_TGFB", "mean_RAW_CTRL", "mean_RAW_IL1B", "mean_RAW_TGFB", "mean_TeloHAEC_CTRL", "mean_TeloHAEC_IL1b_24h", "mean_TeloHAEC_IL1b_6h", "mean_HASMC_untreatedPilot", "mean_HASMC_Chol", "mean_HepG2_untreatedPilot"]
         setUps_to_compare_list=[]
         
-        # log fold
-        df_IDs_seqs_reg_labels_train["Set up Difference"] = np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]] / df_IDs_seqs_reg_labels_train[setUps_to_compare[1]])
-        print(df_IDs_seqs_reg_labels_train["Set up Difference"]) 
+        # standard normalization (instead of log transformation)
+        df_IDs_seqs_reg_labels_train["Set up Difference"] = (
+                                                             ((np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]]) - np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]].mean())) / np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]].std()) ) 
+                                                            -((np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]]) - np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]].mean())) / np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]].std()) )
+                                                            )
+                                                            
+                                                            
+        #print(df_IDs_seqs_reg_labels_train["Set up Difference"]) 
         setUps_to_compare_list.append(df_IDs_seqs_reg_labels_train["Set up Difference"].to_list() + df_IDs_seqs_reg_labels_train["Set up Difference"].to_list())
         
         input_label_train=tf.convert_to_tensor(setUps_to_compare_list)
 
         #transpose
         input_label_train=tf.transpose(input_label_train)
-        print(input_label_train)
+        #print(input_label_train)
 
         #sequence train data (original sequence + augmented by using complemantary reverse strand sequence)
         input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list() + df_IDs_seqs_reg_labels_train['compSeq one hot encoded'].to_list()), tf.int8)
@@ -218,9 +222,12 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
         #label train data 
         setUps_to_compare_list=[]
         # log fold 
-        df_IDs_seqs_reg_labels_train["Set up Difference"] = np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]] / df_IDs_seqs_reg_labels_train[setUps_to_compare[1]])
-        print(df_IDs_seqs_reg_labels_train["Set up Difference"]) 
-
+        df_IDs_seqs_reg_labels_train["Set up Difference"] = (
+                                                             ((np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]]) - np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]].mean())) / np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[0]].std()) ) 
+                                                            -((np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]]) - np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]].mean())) / np.log(df_IDs_seqs_reg_labels_train[setUps_to_compare[1]].std()) )
+                                                            )
+        #print(df_IDs_seqs_reg_labels_train["Set up Difference"]) 
+        print ("traiing data mean", df_IDs_seqs_reg_labels_train[setUps_to_compare[1]].mean())
         setUps_to_compare_list.append(df_IDs_seqs_reg_labels_train["Set up Difference"].to_list())
         
 
@@ -228,7 +235,7 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
 
         #transpose
         input_label_train=tf.transpose(input_label_train)
-        print(input_label_train)
+        #print(input_label_train)
 
         #sequence train data (original sequence + augmented by using complemantary strand sequence)
         input_seq_train=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_train["Seq one hot encoded"].to_list()), tf.int8)
@@ -236,7 +243,10 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
     #labels test data
     setUps_to_compare_list=[]
     # log fold 
-    df_IDs_seqs_reg_labels_test["Set up Difference"] = np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[0]] / df_IDs_seqs_reg_labels_test[setUps_to_compare[1]])
+    df_IDs_seqs_reg_labels_test["Set up Difference"] = (
+                                                        ((np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[0]]) - np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[0]].mean())) / np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[0]].std()) ) 
+                                                        -((np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[1]]) - np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[1]].mean())) / np.log(df_IDs_seqs_reg_labels_test[setUps_to_compare[1]].std()) )
+                                                        )
     print(df_IDs_seqs_reg_labels_test["Set up Difference"])
 
     setUps_to_compare_list.append(df_IDs_seqs_reg_labels_test["Set up Difference"].to_list())
@@ -245,7 +255,7 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
 
     #transpose
     input_label_test=tf.transpose(input_label_test)
-    print(input_label_test)
+    #print(input_label_test)
 
     #sequences test data
     input_seq_test=tf.cast(tf.convert_to_tensor(df_IDs_seqs_reg_labels_test["Seq one hot encoded"].to_list()), tf.int8)
@@ -337,7 +347,7 @@ def cli(counts1_file, counts2_file, seqs_file, mode, hold_out_chrom, use_aug, pr
             
             #save model
             print("save model"+str(lr))
-            model.save("allseq-CNN_StarSeq_model_Minna_deepSTAR_lr"+str(lr)+str(use_aug)+"setUpSpec"+str(setUps_to_compare))
+            model.save("allseq-CNN_StarSeq_model_Minna_deepSTAR_lr"+str(lr)+str(use_aug)+"setUpSpecNorm_lgTF_"+str(setUps_to_compare))
 
             #evaluate model on test data
             model.evaluate(input_seq_test, input_label_test, batch_size=batch_size, verbose=2)

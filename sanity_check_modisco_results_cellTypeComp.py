@@ -26,7 +26,7 @@ from scipy import stats
 import random
 
 #merh als 1000 sum seqlets 
-motivsToCheck=["ATTTCC", "TGACTCA", "AGGCCT", "ACAGGAAGT", "GGAAATG"]
+motivsToCheck=[ "GGAATTTCC", "ATGATGTCA"]
 
 #define cell type
 cellType=["cell_3T3_diff_CTRL", "ccell_3T3_undiff_CTRL", "cell_3T3_undiff_TGFB", "RAW_CTRL" , "RAW_IL1B", "RAW_TGFB", "TeloHAEC_CTRL", "TeloHAEC_IL1b_24h", "TeloHAEC_IL1b_6h", "HASMC_untreatedPilot", "HASMC_Chol", "HepG2_untreatedPilot"]
