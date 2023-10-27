@@ -2,7 +2,7 @@
 
 This repository contains and describes code used to train, evaluate, and interprete multi task STARseq CNNs based on STARseq data from multiple experimental set-ups provided by the [Kaikkonen Lab](https://uefconnect.uef.fi/en/group/cardiovascular-genomics-kaikkonen-lab/). The folder `finalModel` contains the trained model used for further analysis described in the manuscript. It can be loaded in an existing python script using `model=keras.models.load_model("allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_aug")`. This readme describes how to use the code given in this repository. A series of bash commands to execute the entire workflow is given at the end.
 
-## Worklflow CNN training, evaluation, and interpretation
+## Worklflow multitask CNN training, evaluation, and interpretation
 
 ### Clone this repository
 Use `git clone https://github.com/ThorbenMaa/STARseqCNN.git`. Operate from inside the directory.
@@ -60,6 +60,10 @@ The motifs the model has learned can look like this:
 
 In this case, the motif matches a known motif from the JASPAr data base:
 ![alt text for screen readers](MA1950.1_FLI1__FOXI1.png "MA1950.1_FLI1__FOXI1 motif from JASPAR data base")
+
+## Reducing redundancy in JASPAR motifs matched with CNN motifs
+As there is a lot of redundancy within the JASPAR data base (i.e., many motifs are almost identical, even though we are already using the JASPAR2022_CORE_vertebrates_**non-redundant**_pfms_meme.txt), there is the `processReports_withMotifClusteringForSpecAna.py` script in this repository. The script groups TF binding motifs from the JASPAR data base which were recocnized and matched my tfmodisco with the motifs the CNN has learned. The grouping is done in the following way: First, only JASPAR motifs with a certain `modisco q_val` are considered (see documentation within script) that are matched in any of the modisco reports submitted to the script. Second, if there are several matches for a particular CNN motif pattern, they are grouped together. Third, if one of the motifs overlap with another group from the same modisco report or another one submitted simulatiously to the script, the groups are merged. The number of seqlets are added up and a heatmap is generated:
+![alt text for screen readers](TFM_heatmap_withClustering_all_qval_0_01.svg "Heatmap")
 
 ### Sanity check
 Has the CNN really learned motifs that enhance/repress activity in the STARseq experiment? First, activate the `CNN_TM` environment using `mamba activate CNN_TM`. You can use the `sanity_check_modisco_results.py` script to plot experimental activity within one cell type of sequences containing a motif of interest or not (documentation and example bash command provided in the script). The result will look like this:
@@ -124,4 +128,7 @@ You can also calculate the correlations of the difference in experimental activi
 > sbatch sbatch_sbatch_sanityCheck_variantEffects.sh
 > ```
 >
+
+## Workflow diffCNN training and evaluation
+From my experience, most of the 
 
