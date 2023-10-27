@@ -130,5 +130,31 @@ You can also calculate the correlations of the difference in experimental activi
 >
 
 ## Workflow diffCNN training and evaluation
-From my experience, most of the 
+Whereas the mutitask CNN has will likely learn general TF motifs, we are also interested in TFs that are different for different experimental set ups. Here, a DiffCNN can become handy. The idea is tro train a CNN on the difference in STARRseq activity between two particular experimental set ups. E.g., a control and a cell line treated with some kind of agent. The workflow is quite similar to the multitaskCNN workflow, but the scripts differ a bit. They can be found in
+`ExpSetUpSpecificCNN`. A series of bash commands is given below. Make sure to set up environments etc. as described above.
+> ```
+> # train models
+> mamba activate CNN_TM
+>
+> ## Train and evaluate a model on log transformed differneces (works best in my experience)
+> sbatch sbatch_Train_CNN_setUpSpec_TM.sh
+>
+> ## Train and evaluate a model on standardized differences
+> sbatch_Train_CNN_setUpSpec_norm_TM.sh
+>
+> ## Train and evaluate a model on standardized and log transformed differences
+> sbatch_Train_CNN_setUpSpec_norm_TM.sh
+>
+> # ISM
+> sbatch_ism_spec.sh
+>
+> # tfmodisco-lite
+> mamba activate modisco_lite
+> wget https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+> cat JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt | awk '{{if ($1=="MOTIF") {{print $1,$2"_"$3,$3}} else {{print $0}}}}' > JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
+> sbatch_tfmodisco_spec.sh
+>
+> # sanity checks (on the example of HepG2 vs TeloHEAC_CTRL, scripts would need to be adapted a bit for other examples - sorry!)
+>  python ./ExpSetUpSpecificCNN/sanityCheck_modisco_results_diff_HepG2_vs_TeloHEAC_CTRL.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
+
 
