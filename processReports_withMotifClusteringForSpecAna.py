@@ -1,7 +1,7 @@
 """
-Description:        
+Description:            see readme
 
-Inputs:                  see below (click otions)
+Inputs:                 see below (click otions)
 
 
 Outputs:                heatmap 
