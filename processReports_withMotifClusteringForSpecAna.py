@@ -1,5 +1,5 @@
 """
-Description:            see readme
+Description:            see readme. Note that name of heatmap plot has to be change manuall in line 317 - sorry!
 
 Inputs:                 see below (click otions)
 
