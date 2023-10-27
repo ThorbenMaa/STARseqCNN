@@ -31,7 +31,7 @@ python ExpSetUpSpecificCNN/train_or_eval_CNNs_setUpSpec_norm_logTF.py \
 --holdOut chr8  \
 --useAug use_aug  \
 --model noModel \
---compare mean_TeloHAEC_IL1b_6h \
+--compare mean_HepG2_untreatedPilot \
 --compare mean_TeloHAEC_CTRL
 
 python ExpSetUpSpecificCNN/train_or_eval_CNNs_setUpSpec_norm_logTF.py \
@@ -47,5 +47,3 @@ python ExpSetUpSpecificCNN/train_or_eval_CNNs_setUpSpec_norm_logTF.py \
    
 
 echo finished
-allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_augsetUpSpecNorm_lgTF_('mean_HepG2_untreatedPilot', 'mean_TeloHAEC_CTRL')
-mean_TeloHAEC_IL1b_6h
