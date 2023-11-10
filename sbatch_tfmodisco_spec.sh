@@ -21,11 +21,11 @@ export TMPDIR=/fast/users/$USER/scratch/tmp
 
 echo startInst
 # mamba activate modisco-lite
-python modisco_TM.py hypothetical_contribution_scores_mean_diffTeloHEAC_6h_vs_24h.npz Sequences.npz
+python modisco_TM.py hypothetical_contribution_scores_mean_diffTeloHEAC_CTRL_vs_6h.npz Sequences.npz
 
 
 
-modisco report -i modisco_resultshypothetical_contribution_scores_mean_diffTeloHEAC_6h_vs_24h.npz.h5 -o report_diffTeloHEAC_6h_vs_24h/ -s report_diffTeloHEAC_6h_vs_24h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
+#modisco report -i modisco_resultshypothetical_contribution_scores_mean_diffTeloHEAC_CTRL_vs_6h.npz.h5 -o report_diffTeloHEAC_6h_vs_24h/ -s report_diffTeloHEAC_6h_vs_24h/ -m JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme_nice.txt
 
 
 echo finished

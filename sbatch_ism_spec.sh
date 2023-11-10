@@ -22,7 +22,7 @@ export TMPDIR=/fast/users/$USER/scratch/tmp
 
 echo startInstism_TeloHEAC_CTRL_vs_6h
 # mamba activate CNN_TM
-python ./ExpSetUpSpecificCNN/ism_spec_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01no_augsetUpSpec\(\'mean_TeloHAEC_IL1b_6h\',\ \'mean_TeloHAEC_IL1b_24h\'\) 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt TeloHEAC_6h_vs_24h
+python ./ExpSetUpSpecificCNN/ism_spec_TM.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01use_augsetUpSpec('mean_TeloHAEC_CTRL', 'mean_TeloHAEC_IL1b_6h') 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt TeloHEAC_CTRL_vs_6h
 
 echo finished
 # allseq-CNN_StarSeq_model_Minna_deepSTAR_lr0.01use_augsetUpSpec('mean_TeloHAEC_CTRL', 'mean_TeloHAEC_IL1b_6h')
