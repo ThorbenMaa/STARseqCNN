@@ -51,7 +51,25 @@ import logomaker
     multiple=False,
     type=str,
     default="all",
-    help="e.g. diffBoxplot. How output files will start",
+    help=" How output figure file will start",
+)
+@click.option(
+    "--outputPWMs",
+    "outputPWM",
+    required=True,
+    multiple=False,
+    type=str,
+    default="TeloHAEC_CTRL_sigPWMs.txt",
+    help=" How output figure file will start",
+)
+@click.option(
+    "--outputPWM_set_up",
+    "outputPWM_set_up",
+    required=True,
+    multiple=False,
+    type=str,
+    default="TeloHAEC_CTRL",
+    help=" How output figure file will start",
 )
 @click.option(
     "--setUps",
@@ -60,7 +78,7 @@ import logomaker
     multiple=True,
     type=str,
     default= [ "TeloHAEC_CTRL", "TeloHAEC_IL1b_6h", "TeloHAEC_IL1b_24h", "HepG2_untreatedPilot", "HASMC_Chol", "HASMC_untreatedPilot", "RAW_TGFB", "RAW_IL1B", "RAW_CTRL", "cell_3T3_undiff_TGFB", "ccell_3T3_undiff_CTRL", "cell_3T3_diff_CTRL"],
-    help="has to be two",
+    help="set ups considered for plotting exp activities",
 )
 @click.option(
     "--PWMfile",
@@ -68,7 +86,7 @@ import logomaker
     required=True,
     multiple=False,
     type=str,
-    default= "trimmed_PWMs.txt",
+    default= "condensed_test.txt",
     help="contains all PWMs to be tested",
 )
 @click.option(
@@ -89,14 +107,14 @@ import logomaker
     help="alpha for sig testing for tomtom matches",
 )
 @click.option(
-    "--motifs_to_plot",
-    "motifs_to_plot",
+    "--number-motifs_to_plot",
+    "number_motifs_to_plot",
     required=True,
     multiple=False,
     default=1,
     help="alpha for sig testing for tomtom matches",
 )
-def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_base_file, tomtom_qual_level, motifs_to_plot ):
+def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_base_file, tomtom_qual_level, number_motifs_to_plot, outputPWM_set_up, outputPWM ):
 
 
 
@@ -161,8 +179,19 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
 
     #split data to dataframe corresponding to sequences having or not having the motif of interest and extract corresponding experimental activities
     #plot experimental activities
+
+    #initialize outfile with significant PWMs in outPWM  set up
+    outPWM=open(outputPWM, "w")
+    background = 0.25
     
-    fig, axs = plt.subplots(nrows=len(motivsToCheck), ncols=3+motifs_to_plot*2+1, sharex=False, sharey=False, figsize=((3+motifs_to_plot*2+1)*8 ,4*len(motivsToCheck)))
+    outPWM.write('MEME version 4\n\n')
+    outPWM.write('ALPHABET= ACGT\n\n')
+    outPWM.write('strands: + -\n\n')
+    outPWM.write('Background letter frequencies (from unknown source):\n')
+    outPWM.write('A %.3f C %.3f G %.3f T %.3f\n\n' % (background, background, background, background))
+    
+    
+    fig, axs = plt.subplots(nrows=len(motivsToCheck), ncols=3+number_motifs_to_plot*2+1, sharex=False, sharey=False, figsize=((3+number_motifs_to_plot*2+1)*8 ,4*len(motivsToCheck)))
     if len(motivsToCheck)==1: # bug repair, da sonst bei nur einem motif ax[i] mit i=0 nicht gefunden wird. Dann ist axs keine liste sondern nur ein ding
         axs=[axs]
     fig.subplots_adjust(hspace=0.5)
@@ -182,17 +211,21 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
                 plot_logo(data_base_entries[p], axs, i, 1, "CNN motif " +data_base_entries[p].split("\n")[0].split()[0])
                 
                 # look for JASPAR matches
-                background = 0.25
+
+                # write PWM in meme file
                 tmp_file=open("tmp.txt", "w")
+                background = 0.25
+    
                 tmp_file.write('MEME version 4\n\n')
                 tmp_file.write('ALPHABET= ACGT\n\n')
                 tmp_file.write('strands: + -\n\n')
                 tmp_file.write('Background letter frequencies (from unknown source):\n')
                 tmp_file.write('A %.3f C %.3f G %.3f T %.3f\n\n' % (background, background, background, background))
-                tmp_file.write("MOTIF " + data_base_entries[p])
+                append_to_meme_file(data_base_entries[p], tmp_file)
                 tmp_file.close()
+
                 
-                # run tomtom
+                # run tomtom gaiannst JASPAR
                 cmd = 'export PATH=$HOME/meme/bin:$HOME/meme/libexec/meme-5.5.4:$PATH'
                 os.system(cmd)
                 cmd = 'tomtom -no-ssc -oc . --verbosity 1 -text -min-overlap 5 -mi 1 -dist pearson -evalue -thresh 10.0 tmp.txt %s > %s' % (data_base_file , "tmp_tomtom")
@@ -204,7 +237,7 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
                 df_tomtom_sig=df_tomtom_sig.sort_values(by=['q-value'])
                 df_tomtom_sig=df_tomtom_sig.reset_index(drop=True)
 
-                # look for corresponding PWSs
+                # look for corresponding PWSs in JASPAR
                     # read data base entries
                 JASPAR=open(data_base_file, "r")
                 JASPAR_entries=JASPAR.read().split("MOTIF")
@@ -217,7 +250,7 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
                 for index, row in df_tomtom_sig.iterrows():
                     #additional_match=0
                     tmp_motif=row['Target_ID']
-                    if int(index)<motifs_to_plot:
+                    if int(index)<number_motifs_to_plot:
                         for g in range (0, len(JASPAR_entries), 1):
                             if JASPAR_entries[g].split("\n")[0].split()[0] == tmp_motif:
                                 plot_logo(JASPAR_entries[g], axs, i, 3+index*2, "data base match: "+JASPAR_entries[g].split("\n")[0].split()[0])
@@ -230,9 +263,9 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
                                 #additional_match=additional_match+1
                                 break
                 if len(otherMotifs)>0:
-                    axs[i,2+motifs_to_plot*2+1].imshow(WordCloud(collocations=False, background_color="white").generate(str(otherMotifs)))
-                axs[i,2+motifs_to_plot*2+1].set_axis_off()
-                axs[i,2+motifs_to_plot*2+1].set_title("other data base matches:") 
+                    axs[i,2+number_motifs_to_plot*2+1].imshow(WordCloud(collocations=False, background_color="white").generate(str(otherMotifs)))
+                axs[i,2+number_motifs_to_plot*2+1].set_axis_off()
+                axs[i,2+number_motifs_to_plot*2+1].set_title("other data base matches:") 
                 break 
 
         
@@ -287,6 +320,15 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
             text_height = bar_height + (y_range * 0.01)
             if stats.kruskal(data[j], data[j+1])[1]<0.01:
                 axs[i,0].text((j+1 + j+2) * 0.5, text_height, "*", ha='center', va='bottom', c='k')  
+
+                ### write significant PWMs for selected set up in outpu meme file
+                if outputPWM_set_up==exp_set_ups[j//2]:
+                    for p in range (0, len(data_base_entries), 1):
+                        #print(data_base_entries[p].split("\n")[0].split()[0])
+                        if data_base_entries[p].split("\n")[0].split()[0] == str(motivsToCheck[i]):
+                            append_to_meme_file(data_base_entries[p], outPWM)
+
+
             else:
                 axs[i,0].text((j+1 + j+2) * 0.5, text_height, "n.s.", ha='center', va='bottom', c='k')  
         
@@ -304,6 +346,7 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
 
     fig.tight_layout()         
     plt.savefig(str(out)+str(exp_set_ups)+".svg")
+    outPWM.close()
         #plt.close()
 
 def plot_logo(data_base_entry, axs, axsrow, axscolumn, title):
@@ -373,6 +416,9 @@ def plot_logo(data_base_entry, axs, axsrow, axscolumn, title):
     PWM_logo.ax.xaxis.set_ticks_position('none')
     PWM_logo.ax.xaxis.set_tick_params(pad=-1)    
     PWM_logo.ax.set_title(title + " rev")
+
+def append_to_meme_file(data_base_entry, existingFileName):
+    existingFileName.write("MOTIF " + data_base_entry)
 
         
 if __name__ == "__main__":
