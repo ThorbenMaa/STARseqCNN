@@ -54,7 +54,7 @@ def cli(report_file, out_pwm):
 
                 score = np.sum(np.abs(cwm), axis=1)
                 trim_thresh = np.max(score) * 0.3  # Cut off anything less than 30% of max score
-                pass_inds = np.where(score >= trim_thresh)[0]
+                pass_inds = np.where(score >= trim_thresh)[0] #returns indices that are non-zero
                 trimmed = pwm[np.min(pass_inds): np.max(pass_inds) + 1]
 
                 trimmed_ppms.append(trimmed)

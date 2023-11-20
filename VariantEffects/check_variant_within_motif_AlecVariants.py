@@ -28,8 +28,8 @@ from scipy import stats
     help="fimo file",
 )
 @click.option(
-    "--variantsFile",
-    "variants_file",
+    "--activityFile",
+    "activity_file",
     required=True,
     multiple=False,
     type=str,
@@ -37,13 +37,13 @@ from scipy import stats
     help="e.g. VariantEffects/df_highestVariantEffects_mean_TeloHAEC_IL1b_6h.csv",
 )
 @click.option(
-    "--q_thres",
-    "q_thres",
+    "--expSetUp",
+    "exp_set_up",
     required=True,
     multiple=False,
-    type=float,
-    default=0.01,
-    help="fimo",
+    type=str,
+    default="TeloHAEC_IL1b_6h",
+    help="bla",
 )
 @click.option(
     "--output",
@@ -54,12 +54,18 @@ from scipy import stats
     default="bla",
     help="bla",
 )
-def cli(fimo_file, variants_file, out, q_thres):
+def cli(fimo_file, activity_file, exp_set_up, out):
 
     #import labels; abs diff activities of seq with ID1 - ID2
-    df_activities=pd.read_csv(variants_file, sep=",", low_memory=False)
+    df_activities=pd.read_csv(activity_file, sep=",", decimal=',', low_memory=False)
+    df_activities["ID1"]=df_activities["alleles"][0:-4]+df_activities["alleles"][-3]
+    print(df_activities["ID1"])
+    df_activities["ID2"]=df_activities["alleles"][0:-4]+df_activities["alleles"][-1]
+    print(df_activities["ID2"])
+
+
     print("number of variant pairs :", df_activities.shape[0])
-    df_fimo_hits=pd.read_csv(fimo_file, sep="\t",  low_memory=False)
+    df_fimo_hits=pd.read_csv(fimo_file, sep="\t", decimal=',', low_memory=False)
 
     # select all fimo hits with ID1
     df_fimo_hits1=df_fimo_hits.rename(columns={'sequence_name': 'ID1'})
@@ -68,7 +74,6 @@ def cli(fimo_file, variants_file, out, q_thres):
     #print(df_fimo_hits1)
     df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["variantPos"] <= df_fimo_hits1["stop"]]
     df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["start"] <= df_fimo_hits1["variantPos"]]
-    df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["q-value"] < q_thres]
     #print(df_fimo_hits1)
 
     # select all fimo hits with ID2 (diff sind immer 2 seqs. motif kann theretisch in nur einem der beiden haplotyppes erkannt werden von FIMO)
@@ -77,7 +82,6 @@ def cli(fimo_file, variants_file, out, q_thres):
     #print(df_fimo_hits2)
     df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["variantPos"] <= df_fimo_hits2["stop"]]
     df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["start"] <= df_fimo_hits2["variantPos"]]
-    df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["q-value"] < q_thres]
     #print(df_fimo_hits2)
 
     # add fimo hits with ID1 to output
@@ -85,12 +89,9 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out1["ID1"] = df_fimo_hits1["ID1"]
     df_out1["ID2"] = df_fimo_hits1["ID2"]
     df_out1["variantPos"] = df_fimo_hits1["variantPos"]
-    df_out1["diff_activity mean_TeloHAEC_IL1b_6h"] = df_fimo_hits1["diff_activity mean_TeloHAEC_IL1b_6h"] #Telo HEac hard evcuded but doesn matter, could e every other too
+    df_out1["diff_activity mean_"+str(exp_set_up)] = df_fimo_hits1["diff_activity mean_"+str(exp_set_up)]
     df_out1["Seq1"] = df_fimo_hits1["Seq1"]
     df_out1["Seq2"] = df_fimo_hits1["Seq2"]
-    df_out1["MotifID"] = df_fimo_hits1["motif_id"]
-    df_out1["start"] = df_fimo_hits1["start"]
-    df_out1["stop"] = df_fimo_hits1["stop"]
     
     #df_out1["TF motif"]=df_fimo_hits1["motif_alt_id"]
 
@@ -99,20 +100,16 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out2["ID1"] = df_fimo_hits2["ID1"]
     df_out2["ID2"] = df_fimo_hits2["ID2"]
     df_out2["variantPos"] = df_fimo_hits2["variantPos"]
-    df_out2["diff_activity mean_TeloHAEC_IL1b_6h"] = df_fimo_hits2["diff_activity mean_TeloHAEC_IL1b_6h"]
+    df_out2["diff_activity mean_"+str(exp_set_up)] = df_fimo_hits2["diff_activity mean_"+str(exp_set_up)]
     df_out2["Seq1"] = df_fimo_hits2["Seq1"]
-    df_out2["Seq2"] = df_fimo_hits2["Seq2"]
-    df_out2["MotifID"] = df_fimo_hits2["motif_id"]
-    df_out2["start"] = df_fimo_hits2["start"]
-    df_out2["stop"] = df_fimo_hits2["stop"]
+    df_out2["Seq2"] = df_fimo_hits2["Seq1"]
     #df_out2["TF motif"]=df_fimo_hits2["motif_alt_id"]
 
     # final output
     df_final=pd.concat([df_out1, df_out2])
     #print(df_final)
-    print("Number of variants within tested motifs", df_final.drop_duplicates(subset=["ID1","ID2"]).shape[0])
-    df_final=df_final.drop_duplicates(subset=["ID1", "ID2", "variantPos", "diff_activity mean_TeloHAEC_IL1b_6h", "start", "stop", "MotifID"])
-    #print("Number of variants within tested motifs", df_final.shape[0])
+    df_final=df_final.drop_duplicates(subset=["ID1", "ID2", "variantPos", "diff_activity mean_"+str(exp_set_up)])
+    print("Number of variants within tested motifs", df_final.shape[0])
 
 
     df_final.to_csv(str(out)+".csv")

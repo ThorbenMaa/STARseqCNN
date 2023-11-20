@@ -49,14 +49,14 @@ pos_patterns, neg_patterns = modiscolite.tfmodisco.TFMoDISco(
         hypothetical_contribs=scores,
         one_hot=seqs,
         max_seqlets_per_metacluster=20000,
-        trim_to_window_size=20,
+        trim_to_window_size=10,#20
         n_leiden_runs=2,
-        initial_flank_to_add=5,
+        initial_flank_to_add=3,#5
         final_min_cluster_size=30, 
         verbose=True)
 
 #save results
-modiscolite.io.save_hdf5("modisco_results"+str(sys.argv[1])+".h5", pos_patterns, neg_patterns)
+modiscolite.io.save_hdf5("modisco_results_v2"+str(sys.argv[1])+".h5", pos_patterns, neg_patterns)
 
 #print pos and neg patterns; None or empty array if no patterns are identified.
 print(pos_patterns)
