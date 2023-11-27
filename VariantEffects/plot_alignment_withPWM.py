@@ -70,21 +70,20 @@ def cli(alig_motif_file, PWM_file, out, chunk_size ):#PWM_file
         chunk=chunk.reset_index(drop=True)
         chuckNumber=chuckNumber+1
         height_ratio_list=[]
-        for i in range (0, chunk.shape[0]*4, 4):
-            height_ratio_list.append(3)
+        for i in range (0, chunk.shape[0]*3, 3):
             height_ratio_list.append(3)
             height_ratio_list.append(0.5)
             height_ratio_list.append(0.5)
-        fig, axs = plt.subplots(nrows= chunk.shape[0]*4, ncols=1, sharex=True, sharey=False, height_ratios=height_ratio_list, figsize=(16, 4*chunk.shape[0] ))
+        fig, axs = plt.subplots(nrows= chunk.shape[0]*3, ncols=1, sharex=True, sharey=False, height_ratios=height_ratio_list, figsize=(16, 3*chunk.shape[0] ))
         if chunk.shape[0]==1: # bug repair, da sonst bei nur einem motif ax[i] mit i=0 nicht gefunden wird. Dann ist axs keine liste sondern nur ein ding
             axs=[axs]
         #fig.subplots_adjust(hspace=0.5)
         for index,row in chunk.iterrows():
             print(index)
-            index=index*4
+            index=index*3
             reverse=False
             title="bla"
-            
+            strand=row["strand"]
             start=int(row["start"])-1
             stop=int(row["stop"])-1
             total=len(row["Seq1"])
@@ -95,15 +94,15 @@ def cli(alig_motif_file, PWM_file, out, chunk_size ):#PWM_file
                 #print(data_base_entries[p].split("\n")[0].split()[0])
                 if data_base_entries[p].split("\n")[0].split()[0] == str(row["MotifID"]):
 
-                    plot_logo(data_base_entries[p], axs, index+0, "Motif "+data_base_entries[p].split("\n")[0].split()[0], start, stop, total, variantPos)
+                    plot_logo(data_base_entries[p], axs, index+0, "Motif "+data_base_entries[p].split("\n")[0].split()[0], start, stop, total, variantPos, strand)
                     break
 
             # seq 1 to pwm and plot
 
-            plot_seq_logo(row["Seq1"], axs, index+2,  "ID: "+str(row["ID1"]),  reverse, False, start, stop, variantPos)
+            plot_seq_logo(row["Seq1"], axs, index+1,  "ID: "+str(row["ID1"]),  reverse, False, start, stop, variantPos)
 
             # seq 2 to pwm and plot
-            plot_seq_logo(row["Seq2"], axs, index+3,  "ID: "+str(row["ID2"]),  reverse, True, start, stop, variantPos)
+            plot_seq_logo(row["Seq2"], axs, index+2,  "ID: "+str(row["ID2"]),  reverse, True, start, stop, variantPos)
 
             
         #fig.tight_layout()         
@@ -117,7 +116,7 @@ def cli(alig_motif_file, PWM_file, out, chunk_size ):#PWM_file
         
         
         
-def plot_logo(data_base_entry, axs, axsrow, title, start, stop, total, variantPos):
+def plot_logo(data_base_entry, axs, axsrow, title, start, stop, total, variantPos, strand):
     
 
     #prepare fwd seq
@@ -190,48 +189,48 @@ def plot_logo(data_base_entry, axs, axsrow, title, start, stop, total, variantPo
 
                                     #print (df_PWM)
                                 
+    if strand=="+":
+                                    # create forward Logo object
+        PWM_logo = logomaker.Logo(df_PWM_f,
+                                shade_below=.5,
+                                fade_below=.5,
+                                ax=axs[axsrow]
+                                )
+                                    
+        # style using Logo methods
+        PWM_logo.style_spines(visible=False)
+        PWM_logo.style_spines(spines=['left'], visible=True)
+        PWM_logo.style_xticks(rotation=90, fmt='%d', anchor=0)
 
-                                # create forward Logo object
-    PWM_logo = logomaker.Logo(df_PWM_f,
-                            shade_below=.5,
-                            fade_below=.5,
-                            ax=axs[axsrow]
-                            )
-                                
-    # style using Logo methods
-    PWM_logo.style_spines(visible=False)
-    PWM_logo.style_spines(spines=['left'], visible=True)
-    PWM_logo.style_xticks(rotation=90, fmt='%d', anchor=0)
+        # style using Axes methods
+        PWM_logo.ax.set_ylabel(title + " fwd" , fontsize=3, rotation="horizontal", labelpad=10)
+        PWM_logo.ax.yaxis.set_tick_params(labelsize=3) 
+        PWM_logo.ax.xaxis.set_ticks_position('none')
+        PWM_logo.highlight_position_range(pmin=start, pmax=stop, color='silver')
+        PWM_logo.highlight_position_range(pmin=variantPos, pmax=variantPos, color='cyan')
+        #PWM_logo.ax.xaxis.set_tick_params(pad=-1)   
+        #PWM_logo.ax.set_title(title + " fwd", fontsize=3) 
+    elif strand=="-":
+        # create rev Logo object
+        PWM_logo = logomaker.Logo(df_PWM_r,
+                                shade_below=.5,
+                                fade_below=.5,
+                                ax=axs[axsrow]
+                                )
 
-    # style using Axes methods
-    PWM_logo.ax.set_ylabel(title + " fwd" , fontsize=3, rotation="horizontal", labelpad=10)
-    PWM_logo.ax.yaxis.set_tick_params(labelsize=3) 
-    PWM_logo.ax.xaxis.set_ticks_position('none')
-    PWM_logo.highlight_position_range(pmin=start, pmax=stop, color='silver')
-    PWM_logo.highlight_position_range(pmin=variantPos, pmax=variantPos, color='cyan')
-    #PWM_logo.ax.xaxis.set_tick_params(pad=-1)   
-    #PWM_logo.ax.set_title(title + " fwd", fontsize=3) 
-
-    # create rev Logo object
-    PWM_logo = logomaker.Logo(df_PWM_r,
-                            shade_below=.5,
-                            fade_below=.5,
-                            ax=axs[axsrow+1]
-                            )
-
-    # style using Logo methods
-    PWM_logo.style_spines(visible=False)
-    PWM_logo.style_spines(spines=['left'], visible=True)
-    PWM_logo.style_xticks(rotation=90, fmt='%d', anchor=0) 
-    
-    # style using Axes methods
-    PWM_logo.ax.set_ylabel(title + " rev" , fontsize=3, rotation="horizontal", labelpad=10)
-    PWM_logo.ax.yaxis.set_tick_params(labelsize=3) 
-    PWM_logo.ax.xaxis.set_ticks_position('none')
-    PWM_logo.highlight_position_range(pmin=start, pmax=stop, color='silver')
-    PWM_logo.highlight_position_range(pmin=variantPos, pmax=variantPos, color='cyan')
-    #PWM_logo.ax.xaxis.set_tick_params(pad=-1, labelsize=3)    
-    #PWM_logo.ax.set_title(title + " rev", fontsize=3)        
+        # style using Logo methods
+        PWM_logo.style_spines(visible=False)
+        PWM_logo.style_spines(spines=['left'], visible=True)
+        PWM_logo.style_xticks(rotation=90, fmt='%d', anchor=0) 
+        
+        # style using Axes methods
+        PWM_logo.ax.set_ylabel(title + " rev" , fontsize=3, rotation="horizontal", labelpad=10)
+        PWM_logo.ax.yaxis.set_tick_params(labelsize=3) 
+        PWM_logo.ax.xaxis.set_ticks_position('none')
+        PWM_logo.highlight_position_range(pmin=start, pmax=stop, color='silver')
+        PWM_logo.highlight_position_range(pmin=variantPos, pmax=variantPos, color='cyan')
+        #PWM_logo.ax.xaxis.set_tick_params(pad=-1, labelsize=3)    
+        #PWM_logo.ax.set_title(title + " rev", fontsize=3)        
         
 def plot_seq_logo(seq, axs, axsrow, title, reverse, last, start, stop, variantPos): 
     seq1PWM=[[],[],[],[]] 

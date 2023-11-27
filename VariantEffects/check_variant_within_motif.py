@@ -91,6 +91,7 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out1["MotifID"] = df_fimo_hits1["motif_id"]
     df_out1["start"] = df_fimo_hits1["start"]
     df_out1["stop"] = df_fimo_hits1["stop"]
+    df_out1["strand"] = df_fimo_hits1["strand"]
     
     #df_out1["TF motif"]=df_fimo_hits1["motif_alt_id"]
 
@@ -105,6 +106,7 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out2["MotifID"] = df_fimo_hits2["motif_id"]
     df_out2["start"] = df_fimo_hits2["start"]
     df_out2["stop"] = df_fimo_hits2["stop"]
+    df_out2["strand"] = df_fimo_hits2["strand"]
     #df_out2["TF motif"]=df_fimo_hits2["motif_alt_id"]
 
     # final output
