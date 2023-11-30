@@ -1,0 +1,21 @@
+name: CNN_TM
+channels:
+  - conda-forge
+  - default
+  - bioconda
+  - defaults
+dependencies:
+  - python
+  - ca-certificates
+  - openssl
+  - matplotlib
+  - libgcc
+  - certifi
+  - gxx_linux-64
+  - pandas
+  - scipy
+  - click
+  - html5lib
+  - tqdm
+  - pip:
+      - tensorflow
