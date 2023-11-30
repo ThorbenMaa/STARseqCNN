@@ -11,7 +11,7 @@
 #  Request 50GB of memory (hard constraint):
 #SBATCH --mem=50GB
 #  Request one hour maximal execution time (hard constraint):
-#SBATCH --time=0-48:00:00
+#SBATCH --time=0-4:00:00
 #SBATCH --job-name=TrainAndTest
 
 
@@ -23,9 +23,14 @@ export TMPDIR=/fast/users/$USER/scratch/tmp
 
 echo startInst
 # mamba activate CNN_TM
-python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv train bla chr8 use_aug 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
-python train_or_eval_CNNs.py 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt starrseq-all-final-toorder_oligocomposition.csv train bla chr8 no_aug 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt
-      
+python model_train_eval_interpretation/trainCNN.py \
+--activityFile 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo1.txt \
+--activityFile 2023-01-10_22-29-33\ myCounts.minDNAfilt.depthNorm.keepHaps\ -\ starr.haplotypes.oligo2.txt \
+--seqFile starrseq-all-final-toorder_oligocomposition.csv \
+--holdOutChr chr8 \
+--earlyStop True
+--modelName TM_earlyStop
+
    
 
 echo finished

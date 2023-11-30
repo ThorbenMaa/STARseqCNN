@@ -113,7 +113,15 @@ import logomaker
     default=0.05,
     help="alpha for sig testing for tomtom matches",
 )
-def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_base_file, tomtom_qual_level, number_motifs_to_plot, outputPWM, fimo_qual_level ):
+@click.option(
+    "--chunk_size",
+    "chunk_size",
+    required=True,
+    multiple=False,
+    default=1,
+    help="chunk size for output figure",
+)
+def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_base_file, tomtom_qual_level, number_motifs_to_plot, outputPWM, fimo_qual_level, chunk_size ):
 
 
 
@@ -167,12 +175,12 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
 
     
     # generate list with motifs scrutinized in FIMO file
-    motivsToCheck=[]
+    all_motivsToCheck=[]
     df_fimo_temp = df_fimo.sort_values(by=["motif_id"])
     df_fimo_temp = df_fimo_temp.drop_duplicates(subset=["motif_id"])
-    motivsToCheck=df_fimo_temp["motif_id"].to_list()
+    all_motivsToCheck=df_fimo_temp["motif_id"].to_list()
 
-    print(motivsToCheck)
+    print(all_motivsToCheck)
     
 
 
@@ -189,186 +197,188 @@ def cli(seq_file, fimo_file, activity_file, out, exp_set_ups, PWM_file, data_bas
     outPWM.write('Background letter frequencies (from unknown source):\n')
     outPWM.write('A %.3f C %.3f G %.3f T %.3f\n\n' % (background, background, background, background))
     
-    
-    fig, axs = plt.subplots(nrows=len(motivsToCheck), ncols=3+number_motifs_to_plot*2+1, sharex=False, sharey=False, figsize=((3+number_motifs_to_plot*2+1)*8 ,4*len(motivsToCheck)))
-    if len(motivsToCheck)==1: # bug repair, da sonst bei nur einem motif ax[i] mit i=0 nicht gefunden wird. Dann ist axs keine liste sondern nur ein ding
-        axs=[axs]
-    fig.subplots_adjust(hspace=0.5)
-    for i in range (0, len(motivsToCheck), 1):
-        # motif logo
-            
-        # read PWM file
-        data_base=open(PWM_file, "r")
-        data_base_entries=data_base.read().split("MOTIF")
-        data_base.close()
-
-        # look for particular motif and write them to output file
-        for p in range (0, len(data_base_entries), 1):
-            #print(data_base_entries[p].split("\n")[0].split()[0])
-            if data_base_entries[p].split("\n")[0].split()[0] == str(motivsToCheck[i]):
+    chunk_index=0
+    for motivsToCheck in np.array_split(all_motivsToCheck, chunk_size):
+        chunk_index=chunk_index+1
+        fig, axs = plt.subplots(nrows=len(motivsToCheck), ncols=3+number_motifs_to_plot*2+1, sharex=False, sharey=False, figsize=((3+number_motifs_to_plot*2+1)*8 ,4*len(motivsToCheck)))
+        if len(motivsToCheck)==1: # bug repair, da sonst bei nur einem motif ax[i] mit i=0 nicht gefunden wird. Dann ist axs keine liste sondern nur ein ding
+            axs=[axs]
+        fig.subplots_adjust(hspace=0.5)
+        for i in range (0, len(motivsToCheck), 1):
+            # motif logo
                 
-                plot_logo(data_base_entries[p], axs, i, 1, "CNN motif " +data_base_entries[p].split("\n")[0].split()[0])
-                
-                # look for JASPAR matches
+            # read PWM file
+            data_base=open(PWM_file, "r")
+            data_base_entries=data_base.read().split("MOTIF")
+            data_base.close()
 
-                # write PWM in meme file
-                tmp_file=open("tmp.txt", "w")
-                background = 0.25
-    
-                tmp_file.write('MEME version 4\n\n')
-                tmp_file.write('ALPHABET= ACGT\n\n')
-                tmp_file.write('strands: + -\n\n')
-                tmp_file.write('Background letter frequencies (from unknown source):\n')
-                tmp_file.write('A %.3f C %.3f G %.3f T %.3f\n\n' % (background, background, background, background))
-                append_to_meme_file(data_base_entries[p], tmp_file)
-                tmp_file.close()
+            # look for particular motif and write them to output file
+            for p in range (0, len(data_base_entries), 1):
+                #print(data_base_entries[p].split("\n")[0].split()[0])
+                if data_base_entries[p].split("\n")[0].split()[0] == str(motivsToCheck[i]):
+                    
+                    plot_logo(data_base_entries[p], axs, i, 1, "CNN motif " +data_base_entries[p].split("\n")[0].split()[0])
+                    
+                    # look for JASPAR matches
 
-                
-                # run tomtom gaiannst JASPAR
-                cmd = 'export PATH=$HOME/meme/bin:$HOME/meme/libexec/meme-5.5.4:$PATH'
-                os.system(cmd)
-                cmd = 'tomtom -no-ssc -oc . --verbosity 1 -text -min-overlap 5 -mi 1 -dist pearson -evalue -thresh 10.0 tmp.txt %s > %s' % (data_base_file , "tmp_tomtom")
-                os.system(cmd)
-                
-                # select most siginifcant tomtom matches with pvalue < 0.01
-                if os.path.getsize("tmp_tomtom")!=0:
-                    df_tomtom=pd.read_csv("tmp_tomtom", sep="\t", skipfooter=4)
-                    df_tomtom_sig=df_tomtom.loc[df_tomtom['q-value'] < tomtom_qual_level]
-                    df_tomtom_sig=df_tomtom_sig.sort_values(by=['q-value'])
-                    df_tomtom_sig=df_tomtom_sig.reset_index(drop=True)
-
-                    # look for corresponding PWSs in JASPAR
-                        # read data base entries
-                    JASPAR=open(data_base_file, "r")
-                    JASPAR_entries=JASPAR.read().split("MOTIF")
-                    JASPAR.close()
-                    #print(len(JASPAR_entries))
-                    #print(JASPAR_entries[3])
-
-                    # look for particular motif and plot PWM logo
-                    otherMotifs=[]
-                    for index, row in df_tomtom_sig.iterrows():
-                        #additional_match=0
-                        tmp_motif=row['Target_ID']
-                        if int(index)<number_motifs_to_plot:
-                            for g in range (0, len(JASPAR_entries), 1):
-                                if JASPAR_entries[g].split("\n")[0].split()[0] == tmp_motif:
-                                    plot_logo(JASPAR_entries[g], axs, i, 3+index*2, "data base match: "+JASPAR_entries[g].split("\n")[0].split()[0])
-                                    break
-                        else:
-                            for g in range (0, len(JASPAR_entries), 1):
-                                if JASPAR_entries[g].split("\n")[0].split()[0] == tmp_motif:
-                                    otherMotifs.append(JASPAR_entries[g].split("\n")[0].split()[0][9:])
-                                    #axs[i,2+motifs_to_plot*2+1].text(0.2 , -0.3+(index-1)*0.05, JASPAR_entries[g].split("\n")[0].split()[0], size=6) #((index-1)//15)*0.4
-                                    #additional_match=additional_match+1
-                                    break
-                    if len(otherMotifs)>0:
-                        axs[i,2+number_motifs_to_plot*2+1].imshow(WordCloud(collocations=False, background_color="white").generate(str(otherMotifs)))
-                    axs[i,2+number_motifs_to_plot*2+1].set_axis_off()
-                    axs[i,2+number_motifs_to_plot*2+1].set_title("other data base matches:") 
-                break 
-
+                    # write PWM in meme file
+                    tmp_file=open("tmp.txt", "w")
+                    background = 0.25
         
-        
-        # experimental activities
-        data = []
-        xTicks= []
-        for j in range (0, len(exp_set_ups), 1):   
-            df_fimo_temp = df_fimo.loc[(df_fimo['motif_id'].astype(str).str.match(str(motivsToCheck[i])))==True]
-            df_fimo_temp= df_fimo_temp.loc[df_fimo_temp["q-value"] < fimo_qual_level]
-            #print("Number of seqs with motif", df_fimo_temp.shape)
-            df_fimo_temp=df_fimo_temp.drop_duplicates(subset="ID") #drop duplicates damit sequencen in dem motif mehrfach vorkommt nur einmal gezeahlt werden
-            #print("Number of seqs with motif without duplicates", df_fimo_temp.shape)
-            temp_df_IDs_seqs_reg_labels_hasMotiv=df_IDs_seqs_reg_labels[df_IDs_seqs_reg_labels["ID"].isin(df_fimo_temp["ID"].to_list()) ] #to_list() damit reihenfolge egal ist
+                    tmp_file.write('MEME version 4\n\n')
+                    tmp_file.write('ALPHABET= ACGT\n\n')
+                    tmp_file.write('strands: + -\n\n')
+                    tmp_file.write('Background letter frequencies (from unknown source):\n')
+                    tmp_file.write('A %.3f C %.3f G %.3f T %.3f\n\n' % (background, background, background, background))
+                    append_to_meme_file(data_base_entries[p], tmp_file)
+                    tmp_file.close()
+
+                    
+                    # run tomtom gaiannst JASPAR
+                    cmd = 'export PATH=$HOME/meme/bin:$HOME/meme/libexec/meme-5.5.4:$PATH'
+                    os.system(cmd)
+                    cmd = 'tomtom -no-ssc -oc . --verbosity 1 -text -min-overlap 5 -mi 1 -dist pearson -evalue -thresh 10.0 tmp.txt %s > %s' % (data_base_file , "tmp_tomtom")
+                    os.system(cmd)
+                    
+                    # select most siginifcant tomtom matches with pvalue < 0.01
+                    if os.path.getsize("tmp_tomtom")!=0:
+                        df_tomtom=pd.read_csv("tmp_tomtom", sep="\t", skipfooter=4)
+                        df_tomtom_sig=df_tomtom.loc[df_tomtom['q-value'] < tomtom_qual_level]
+                        df_tomtom_sig=df_tomtom_sig.sort_values(by=['q-value'])
+                        df_tomtom_sig=df_tomtom_sig.reset_index(drop=True)
+
+                        # look for corresponding PWSs in JASPAR
+                            # read data base entries
+                        JASPAR=open(data_base_file, "r")
+                        JASPAR_entries=JASPAR.read().split("MOTIF")
+                        JASPAR.close()
+                        #print(len(JASPAR_entries))
+                        #print(JASPAR_entries[3])
+
+                        # look for particular motif and plot PWM logo
+                        otherMotifs=[]
+                        for index, row in df_tomtom_sig.iterrows():
+                            #additional_match=0
+                            tmp_motif=row['Target_ID']
+                            if int(index)<number_motifs_to_plot:
+                                for g in range (0, len(JASPAR_entries), 1):
+                                    if JASPAR_entries[g].split("\n")[0].split()[0] == tmp_motif:
+                                        plot_logo(JASPAR_entries[g], axs, i, 3+index*2, "data base match: "+JASPAR_entries[g].split("\n")[0].split()[0])
+                                        break
+                            else:
+                                for g in range (0, len(JASPAR_entries), 1):
+                                    if JASPAR_entries[g].split("\n")[0].split()[0] == tmp_motif:
+                                        otherMotifs.append(JASPAR_entries[g].split("\n")[0].split()[0][9:])
+                                        #axs[i,2+motifs_to_plot*2+1].text(0.2 , -0.3+(index-1)*0.05, JASPAR_entries[g].split("\n")[0].split()[0], size=6) #((index-1)//15)*0.4
+                                        #additional_match=additional_match+1
+                                        break
+                        if len(otherMotifs)>0:
+                            axs[i,2+number_motifs_to_plot*2+1].imshow(WordCloud(collocations=False, background_color="white").generate(str(otherMotifs)))
+                        axs[i,2+number_motifs_to_plot*2+1].set_axis_off()
+                        axs[i,2+number_motifs_to_plot*2+1].set_title("other data base matches:") 
+                    break 
+
             
-            #print("Overlap fimo labels", temp_df_IDs_seqs_reg_labels_hasMotiv.shape)
-            np_IDs_seqs_reg_labels_hasMotiv=temp_df_IDs_seqs_reg_labels_hasMotiv["mean_"+str(exp_set_ups[j])].to_numpy()
-            data.append(np_IDs_seqs_reg_labels_hasMotiv)
-            xTicks.append(str(exp_set_ups[j])+" +")
-
-
-            df_fimo_temp = df_fimo.loc[(df_fimo['motif_id'].astype(str).str.match(str(motivsToCheck[i])))==True]
-            df_fimo_temp= df_fimo_temp.loc[df_fimo_temp["q-value"] < fimo_qual_level]
-            df_fimo_temp=df_fimo_temp.drop_duplicates(subset="ID")
-            temp_df_IDs_seqs_reg_labels_hasNotMotiv=df_IDs_seqs_reg_labels[~df_IDs_seqs_reg_labels["ID"].isin(df_fimo_temp["ID"].to_list()) ]
-            np_IDs_seqs_reg_labels_hasNotMotiv=temp_df_IDs_seqs_reg_labels_hasNotMotiv["mean_"+str(exp_set_ups[j])].to_numpy()
-            data.append(np_IDs_seqs_reg_labels_hasNotMotiv)
-            xTicks.append(str(exp_set_ups[j])+" -")
-
-
-        # differences
-        np_IDs_seqs_reg_labels_hasMotiv_diff = data[0] - data[2]
-        data.append(np_IDs_seqs_reg_labels_hasMotiv_diff)
-        xTicks.append("Difference +")
-
-        np_IDs_seqs_reg_labels_hasNotMotiv_diff = data[1] - data[3]
-        data.append(np_IDs_seqs_reg_labels_hasNotMotiv_diff)
-        xTicks.append("Difference -")
-
             
-            
-        #print(data)
-        box=axs[i,0].boxplot(data, showfliers=False, patch_artist=True)
-        colors = ['cyan', 'r', "cyan", "r", "cyan", "r"]
-        for patch, color in zip(box['boxes'], colors):
-            patch.set_facecolor(color)
-        #plt.set_ylim=(-2, 100)
+            # experimental activities
+            data = []
+            xTicks= []
+            for j in range (0, len(exp_set_ups), 1):   
+                df_fimo_temp = df_fimo.loc[(df_fimo['motif_id'].astype(str).str.match(str(motivsToCheck[i])))==True]
+                df_fimo_temp= df_fimo_temp.loc[df_fimo_temp["q-value"] < fimo_qual_level]
+                #print("Number of seqs with motif", df_fimo_temp.shape)
+                df_fimo_temp=df_fimo_temp.drop_duplicates(subset="ID") #drop duplicates damit sequencen in dem motif mehrfach vorkommt nur einmal gezeahlt werden
+                #print("Number of seqs with motif without duplicates", df_fimo_temp.shape)
+                temp_df_IDs_seqs_reg_labels_hasMotiv=df_IDs_seqs_reg_labels[df_IDs_seqs_reg_labels["ID"].isin(df_fimo_temp["ID"].to_list()) ] #to_list() damit reihenfolge egal ist
+                
+                #print("Overlap fimo labels", temp_df_IDs_seqs_reg_labels_hasMotiv.shape)
+                np_IDs_seqs_reg_labels_hasMotiv=temp_df_IDs_seqs_reg_labels_hasMotiv["mean_"+str(exp_set_ups[j])].to_numpy()
+                data.append(np_IDs_seqs_reg_labels_hasMotiv)
+                xTicks.append(str(exp_set_ups[j])+" +")
+
+
+                df_fimo_temp = df_fimo.loc[(df_fimo['motif_id'].astype(str).str.match(str(motivsToCheck[i])))==True]
+                df_fimo_temp= df_fimo_temp.loc[df_fimo_temp["q-value"] < fimo_qual_level]
+                df_fimo_temp=df_fimo_temp.drop_duplicates(subset="ID")
+                temp_df_IDs_seqs_reg_labels_hasNotMotiv=df_IDs_seqs_reg_labels[~df_IDs_seqs_reg_labels["ID"].isin(df_fimo_temp["ID"].to_list()) ]
+                np_IDs_seqs_reg_labels_hasNotMotiv=temp_df_IDs_seqs_reg_labels_hasNotMotiv["mean_"+str(exp_set_ups[j])].to_numpy()
+                data.append(np_IDs_seqs_reg_labels_hasNotMotiv)
+                xTicks.append(str(exp_set_ups[j])+" -")
+
+
+            # differences
+            np_IDs_seqs_reg_labels_hasMotiv_diff = data[0] - data[2]
+            data.append(np_IDs_seqs_reg_labels_hasMotiv_diff)
+            xTicks.append("Difference +")
+
+            np_IDs_seqs_reg_labels_hasNotMotiv_diff = data[1] - data[3]
+            data.append(np_IDs_seqs_reg_labels_hasNotMotiv_diff)
+            xTicks.append("Difference -")
+
+                
+                
+            #print(data)
+            box=axs[i,0].boxplot(data, showfliers=False, patch_artist=True)
+            colors = ['cyan', 'r', "cyan", "r", "cyan", "r"]
+            for patch, color in zip(box['boxes'], colors):
+                patch.set_facecolor(color)
+            #plt.set_ylim=(-2, 100)
 
 
 
 
-        level=1
-        # Get the y-axis limits
-        bottom, top = axs[i,0].get_ylim()
-        y_range = top - bottom
-        bar_height = top #(y_range * 0.0002 * level) + top
-        bar_tips = bar_height - (y_range * 0.01)
-        text_height = bar_height + (y_range * 0.005)
-
-        for j in range (0, (len(exp_set_ups)+1)*2, 2): #+1 wegen diff plots
-            #plt siginificance bars
-            #level=1
+            level=1
             # Get the y-axis limits
-            #bottom, top = axs[i,0].get_ylim()
-            #y_range = top - bottom
+            bottom, top = axs[i,0].get_ylim()
+            y_range = top - bottom
+            bar_height = top #(y_range * 0.0002 * level) + top
+            bar_tips = bar_height - (y_range * 0.01)
+            text_height = bar_height + (y_range * 0.005)
 
-            # Plot the bar
-            #bar_height = top #(y_range * 0.0002 * level) + top
-            #bar_tips = bar_height - (y_range * 0.01)
-            axs[i,0].plot(
-                [j+1, j+1, j+2, j+2],
-                [bar_tips, bar_height, bar_height, bar_tips], lw=1, c='k'
-            )
+            for j in range (0, (len(exp_set_ups)+1)*2, 2): #+1 wegen diff plots
+                #plt siginificance bars
+                #level=1
+                # Get the y-axis limits
+                #bottom, top = axs[i,0].get_ylim()
+                #y_range = top - bottom
 
-            #text_height = bar_height + (y_range * 0.005)
-            if stats.kruskal(data[j], data[j+1])[1]<0.01:
-                axs[i,0].text((j+1 + j+2) * 0.5, text_height, "*", ha='center', va='bottom', c='k')  
+                # Plot the bar
+                #bar_height = top #(y_range * 0.0002 * level) + top
+                #bar_tips = bar_height - (y_range * 0.01)
+                axs[i,0].plot(
+                    [j+1, j+1, j+2, j+2],
+                    [bar_tips, bar_height, bar_height, bar_tips], lw=1, c='k'
+                )
 
-                ### write significant PWMs for selected set up in outpu meme file
-                if j==4:
-                    for p in range (0, len(data_base_entries), 1):
-                        #print(data_base_entries[p].split("\n")[0].split()[0])
-                        if data_base_entries[p].split("\n")[0].split()[0] == str(motivsToCheck[i]):
-                            append_to_meme_file(data_base_entries[p], outPWM)
+                #text_height = bar_height + (y_range * 0.005)
+                if stats.kruskal(data[j], data[j+1])[1]<0.01:
+                    axs[i,0].text((j+1 + j+2) * 0.5, text_height, "*", ha='center', va='bottom', c='k')  
 
-
-            else:
-                axs[i,0].text((j+1 + j+2) * 0.5, text_height, "n.s.", ha='center', va='bottom', c='k')  
-        
-        
-         
-        axs[i,0].set_xticks([1,2,3,4,5,6], xTicks, rotation=90)
-        axs[i,0].set_ylabel("experimental activity")
-        axs[i,0].set_title(" n(MOTIF"+str(motivsToCheck[i])+")="+str(data[0].shape[0])+"; "+'n(other)='+str(data[1].shape[0])) #ha
-
-    #plot logo   
+                    ### write significant PWMs for selected set up in outpu meme file
+                    if j==4:
+                        for p in range (0, len(data_base_entries), 1):
+                            #print(data_base_entries[p].split("\n")[0].split()[0])
+                            if data_base_entries[p].split("\n")[0].split()[0] == str(motivsToCheck[i]):
+                                append_to_meme_file(data_base_entries[p], outPWM)
 
 
+                else:
+                    axs[i,0].text((j+1 + j+2) * 0.5, text_height, "n.s.", ha='center', va='bottom', c='k')  
+            
+            
+            
+            axs[i,0].set_xticks([1,2,3,4,5,6], xTicks, rotation=90)
+            axs[i,0].set_ylabel("experimental activity")
+            axs[i,0].set_title(" n(MOTIF"+str(motivsToCheck[i])+")="+str(data[0].shape[0])+"; "+'n(other)='+str(data[1].shape[0])) #ha
+
+        #plot logo   
 
 
 
-    fig.tight_layout()         
-    plt.savefig(str(out)+str(exp_set_ups)+".svg")
+
+
+        fig.tight_layout()         
+        plt.savefig(str(out)+str(exp_set_ups)+str(chunk_index)+".svg")
     outPWM.close()
         #plt.close()
 
