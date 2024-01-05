@@ -17,5 +17,6 @@ dependencies:
   - click
   - html5lib
   - tqdm
+  - mafft
   - pip:
       - tensorflow

@@ -278,11 +278,6 @@ def plot_seq_logo(seq, axs, axsrow, title, reverse, last, start, stop, variantPo
     df_PWM_r["G"]=cwm_rev[2]
     df_PWM_r["T"]=cwm_rev[3]
 
-        
-    df_PWM_f["A"]=cwm_fwd[0]
-    df_PWM_f["C"]=cwm_fwd[1]
-    df_PWM_f["G"]=cwm_fwd[2]
-    df_PWM_f["T"]=cwm_fwd[3]
 
     PWM_logo = logomaker.Logo(df_PWM_f,
                             shade_below=.5,

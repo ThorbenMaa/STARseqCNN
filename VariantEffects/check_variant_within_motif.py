@@ -46,6 +46,15 @@ from scipy import stats
     help="fimo",
 )
 @click.option(
+    "--p_thres",
+    "p_thres",
+    required=True,
+    multiple=False,
+    type=float,
+    default=1,
+    help="fimo already only gives results with p_val<0.0001",
+)
+@click.option(
     "--output",
     "out",
     required=True,
@@ -54,7 +63,7 @@ from scipy import stats
     default="bla",
     help="bla",
 )
-def cli(fimo_file, variants_file, out, q_thres):
+def cli(fimo_file, variants_file, out, q_thres, p_thres):
 
     #import labels; abs diff activities of seq with ID1 - ID2
     df_activities=pd.read_csv(variants_file, sep=",", low_memory=False)
@@ -69,6 +78,7 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["variantPos"] <= df_fimo_hits1["stop"]]
     df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["start"] <= df_fimo_hits1["variantPos"]]
     df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["q-value"] < q_thres]
+    df_fimo_hits1=df_fimo_hits1[df_fimo_hits1["p-value"] < p_thres]
     #print(df_fimo_hits1)
 
     # select all fimo hits with ID2 (diff sind immer 2 seqs. motif kann theretisch in nur einem der beiden haplotyppes erkannt werden von FIMO)
@@ -78,6 +88,7 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["variantPos"] <= df_fimo_hits2["stop"]]
     df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["start"] <= df_fimo_hits2["variantPos"]]
     df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["q-value"] < q_thres]
+    df_fimo_hits2=df_fimo_hits2[df_fimo_hits2["p-value"] < p_thres]
     #print(df_fimo_hits2)
 
     # add fimo hits with ID1 to output
@@ -92,6 +103,8 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out1["start"] = df_fimo_hits1["start"]
     df_out1["stop"] = df_fimo_hits1["stop"]
     df_out1["strand"] = df_fimo_hits1["strand"]
+    df_out1["p-value haplotype effect"] = df_fimo_hits1["P.Value"]
+    df_out1["adj. p-value haplotype effect"] = df_fimo_hits1["adj.P.Val"]
     
     #df_out1["TF motif"]=df_fimo_hits1["motif_alt_id"]
 
@@ -107,12 +120,14 @@ def cli(fimo_file, variants_file, out, q_thres):
     df_out2["start"] = df_fimo_hits2["start"]
     df_out2["stop"] = df_fimo_hits2["stop"]
     df_out2["strand"] = df_fimo_hits2["strand"]
+    df_out2["p-value haplotype effect"] = df_fimo_hits2["P.Value"]
+    df_out2["adj. p-value haplotype effect"] = df_fimo_hits2["adj.P.Val"]
     #df_out2["TF motif"]=df_fimo_hits2["motif_alt_id"]
 
     # final output
     df_final=pd.concat([df_out1, df_out2])
     #print(df_final)
-    print("Number of variants within tested motifs", df_final.drop_duplicates(subset=["ID1","ID2"]).shape[0])
+    print("Number of haplotype effects within tested motifs", df_final.drop_duplicates(subset=["ID1","ID2"]).shape[0])
     df_final=df_final.drop_duplicates(subset=["ID1", "ID2", "variantPos", "diff_activity mean_TeloHAEC_IL1b_6h", "start", "stop", "MotifID"])
     #print("Number of variants within tested motifs", df_final.shape[0])
 

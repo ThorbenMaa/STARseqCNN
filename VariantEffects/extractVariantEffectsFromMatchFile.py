@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 from scipy import stats
+import os
 
 @click.command()
 @click.option(
@@ -125,43 +126,14 @@ def cli(seq_file, activity_file, quantile, out, match_file, cut_off_p_value):
     #print (df_IDs_seqs_reg_labels)
 
 
-    #initalize output df
-    df_diff=pd.DataFrame(columns=["Seq1",
-                                "ID1",
-                                "mean_cell_3T3_diff_CTRL1",
-                                "mean_ccell_3T3_undiff_CTRL1",
-                                "mean_cell_3T3_undiff_TGFB1",
-                                "mean_RAW_CTRL1",
-                                "mean_RAW_IL1B1",
-                                "mean_RAW_TGFB1",
-                                "mean_TeloHAEC_CTRL1",
-                                "mean_TeloHAEC_IL1b_24h1",
-                                "mean_TeloHAEC_IL1b_6h1",
-                                "mean_HASMC_untreatedPilot1",
-                                "mean_HASMC_Chol1",
-                                "mean_HepG2_untreatedPilot1",
-                                "Seq2",
-                                "ID2",
-                                "mean_cell_3T3_diff_CTRL2",
-                                "mean_ccell_3T3_undiff_CTRL2",
-                                "mean_cell_3T3_undiff_TGFB2",
-                                "mean_RAW_CTRL2",
-                                "mean_RAW_IL1B2",
-                                "mean_RAW_TGFB2",
-                                "mean_TeloHAEC_CTRL2",
-                                "mean_TeloHAEC_IL1b_24h2",
-                                "mean_TeloHAEC_IL1b_6h2",
-                                "mean_HASMC_untreatedPilot2",
-                                "mean_HASMC_Chol2",
-                                "mean_HepG2_untreatedPilot2",
-                                "variantPos"
-                                ])
+    
 
     #idetify haplotype pairs
     df_IDs_seqs_reg_labels_list=df_IDs_seqs_reg_labels.values.tolist()
     #print(df_IDs_seqs_reg_labels.iloc[[1]])
     #print (str(df_IDs_seqs_reg_labels_list[1][0]))#)[:-1])
-
+    df_diff_list=[]
+    indelCounter=0
     for i in tqdm(range (0, len(df_IDs_seqs_reg_labels_list), 1)):
         for j in range (0, len(df_IDs_seqs_reg_labels_list), 1):
             if str(df_IDs_seqs_reg_labels_list[i][0])[:-1] == str(df_IDs_seqs_reg_labels_list[j][0])[:-1]:
@@ -171,47 +143,70 @@ def cli(seq_file, activity_file, quantile, out, match_file, cut_off_p_value):
                     variantPos=False
                     seq1=df_IDs_seqs_reg_labels.iloc[[i]]["enhancer"].values[0]
                     seq2=df_IDs_seqs_reg_labels.iloc[[j]]["enhancer"].values[0]
-                    for k in range (0, len(seq1), 1):
-                        if seq1[k]!=seq2[k]:
-                            variantPos=k+1
-                            break
 
-                    # fill df
-                    df_diff.loc[len(df_diff)]=[df_IDs_seqs_reg_labels.iloc[[i]]["enhancer"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["ID"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_cell_3T3_diff_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_ccell_3T3_undiff_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_cell_3T3_undiff_TGFB"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_IL1B"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_TGFB"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_IL1b_24h"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_IL1b_6h"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_HASMC_untreatedPilot"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_HASMC_Chol"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[i]]["mean_HepG2_untreatedPilot"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["enhancer"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["ID"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_cell_3T3_diff_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_ccell_3T3_undiff_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_cell_3T3_undiff_TGFB"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_IL1B"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_TGFB"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_CTRL"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_IL1b_24h"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_IL1b_6h"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_HASMC_untreatedPilot"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_HASMC_Chol"].values[0],
-                            df_IDs_seqs_reg_labels.iloc[[j]]["mean_HepG2_untreatedPilot"].values[0],
-                            variantPos,
+                    # check whether there is an indel, indels are excluded
+                    mafft_file=open("mafft_temp.fa", "w")
+                    mafft_file.write(">ID1\n")
+                    mafft_file.write(seq1+"\n")
+                    mafft_file.write(">ID2\n")
+                    mafft_file.write(seq2+"\n")
+                    mafft_file.close()
+                    cmd = 'mafft --quiet --auto mafft_temp.fa > mafft_out_tmp'
+                    os.system(cmd)
+                    mafft_result=open("mafft_out_tmp", "r")
+                    content=mafft_result.read().split(">")
+                    seq1_aligned=str(content[1])[4:]
+                    #print(seq1_aligned)
+                    seq2_aligned=str(content[2])[4:]
+                    #print(seq2_aligned)
+
+                    if ("-" not in seq1_aligned) and ("-" not in seq2_aligned):
+                                
+                        for k in range (0, min(len(seq1), len(seq2)), 1):
+                            if seq1[k]!=seq2[k]:
+                                variantPos=k+1
+                                
+
+                                # fill df
+                                df_diff_list.append([df_IDs_seqs_reg_labels.iloc[[i]]["enhancer"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["ID"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_cell_3T3_diff_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_ccell_3T3_undiff_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_cell_3T3_undiff_TGFB"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_IL1B"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_RAW_TGFB"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_IL1b_24h"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_TeloHAEC_IL1b_6h"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_HASMC_untreatedPilot"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_HASMC_Chol"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[i]]["mean_HepG2_untreatedPilot"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["enhancer"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["ID"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_cell_3T3_diff_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_ccell_3T3_undiff_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_cell_3T3_undiff_TGFB"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_IL1B"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_RAW_TGFB"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_CTRL"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_IL1b_24h"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_TeloHAEC_IL1b_6h"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_HASMC_untreatedPilot"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_HASMC_Chol"].values[0],
+                                        df_IDs_seqs_reg_labels.iloc[[j]]["mean_HepG2_untreatedPilot"].values[0],
+                                        variantPos,
 
 
-                            ]#,
+                                        ])#,
                             #columns= df_diff.columns), ignore_index=True)
-
-                    
+                    else:
+                        print("excluded:")
+                        print(seq1)
+                        print(seq2)
+                        indelCounter=indelCounter+1
+                
 
                                 
                     
@@ -220,6 +215,40 @@ def cli(seq_file, activity_file, quantile, out, match_file, cut_off_p_value):
         if i==2:
             break
         """
+    print("ecludeed sequences as they are indels", indelCounter)
+    df_diff=pd.DataFrame(df_diff_list)
+    #initalize output df
+    
+    df_diff.columns=["Seq1",
+                    "ID1",
+                    "mean_cell_3T3_diff_CTRL1",
+                    "mean_ccell_3T3_undiff_CTRL1",
+                    "mean_cell_3T3_undiff_TGFB1",
+                    "mean_RAW_CTRL1",
+                    "mean_RAW_IL1B1",
+                    "mean_RAW_TGFB1",
+                    "mean_TeloHAEC_CTRL1",
+                    "mean_TeloHAEC_IL1b_24h1",
+                    "mean_TeloHAEC_IL1b_6h1",
+                    "mean_HASMC_untreatedPilot1",
+                    "mean_HASMC_Chol1",
+                    "mean_HepG2_untreatedPilot1",
+                    "Seq2",
+                    "ID2",
+                    "mean_cell_3T3_diff_CTRL2",
+                    "mean_ccell_3T3_undiff_CTRL2",
+                    "mean_cell_3T3_undiff_TGFB2",
+                    "mean_RAW_CTRL2",
+                    "mean_RAW_IL1B2",
+                    "mean_RAW_TGFB2",
+                    "mean_TeloHAEC_CTRL2",
+                    "mean_TeloHAEC_IL1b_24h2",
+                    "mean_TeloHAEC_IL1b_6h2",
+                    "mean_HASMC_untreatedPilot2",
+                    "mean_HASMC_Chol2",
+                    "mean_HepG2_untreatedPilot2",
+                    "variantPos"
+                    ]
     #calc diff of activities 
     df_diff["diff_activity mean_cell_3T3_diff_CTRL"]=(df_diff["mean_cell_3T3_diff_CTRL1"]) - (df_diff["mean_cell_3T3_diff_CTRL2"])
     df_diff["diff_activity mean_ccell_3T3_undiff_CTRL"]=(df_diff["mean_ccell_3T3_undiff_CTRL1"]) - (df_diff["mean_ccell_3T3_undiff_CTRL2"])
@@ -258,7 +287,7 @@ def cli(seq_file, activity_file, quantile, out, match_file, cut_off_p_value):
     # drop duplicates (weil sonst werte dopplet vorkommen, da a-b == b-a bei abs values). Hier koennte man auch alle machen bei subset, aber wahrscheinlichkeit bei 5 zufaellig gleich zu sein ist schon sehr klein
     print("before and after drop duplicates")
     print (df_diff)
-    df_diff=df_diff.drop_duplicates(subset=["diff_activity mean_cell_3T3_diff_CTRL", "diff_activity mean_ccell_3T3_undiff_CTRL", "diff_activity mean_cell_3T3_undiff_TGFB", "diff_activity mean_RAW_CTRL", "diff_activity mean_RAW_IL1B"])
+    df_diff=df_diff.drop_duplicates(subset=["variantPos", "diff_activity mean_cell_3T3_diff_CTRL", "diff_activity mean_ccell_3T3_undiff_CTRL", "diff_activity mean_cell_3T3_undiff_TGFB", "diff_activity mean_RAW_CTRL", "diff_activity mean_RAW_IL1B"])
     print (df_diff)
 
     df_matchFile=pd.read_csv(match_file, sep=",", low_memory=False)
@@ -269,7 +298,10 @@ def cli(seq_file, activity_file, quantile, out, match_file, cut_off_p_value):
 
     print(df_diff["ID1"])
 
+    print("shape before dop dup after merge", df_diff.shape)
     df_highestVariantEffects=pd.merge(df_matchFile, df_diff, on=["ID1", "ID2"])
+    df_diff=df_diff.drop_duplicates(subset=["variantPos", "ID1", "ID2"]) 
+    print("shape after dop dup after merge", df_diff.shape)
 
     df_highestVariantEffects=df_highestVariantEffects.loc[df_highestVariantEffects["P.Value"] < cut_off_p_value]
 

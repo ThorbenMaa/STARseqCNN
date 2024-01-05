@@ -55,12 +55,30 @@ tf.random.set_seed(42)#to make things reproducable, 42 is abitrary
     default=128,
     help="batch size",
 )
-def cli(activity_file, seq_file, sequence_length, batch_size, model_name):
+@click.option(
+    "--model",
+    "model_name",
+    required=True,
+    multiple=False,
+    type=str,
+    default="TM_s_model_early_stop",
+    help="name of model",
+)
+@click.option(
+    "--modelFolder",
+    "model_folder",
+    required=True,
+    multiple=False,
+    type=str,
+    default="models/",
+    help="path to model",
+)
+def cli(activity_file, seq_file, sequence_length, batch_size, model_name, model_folder):
     
     #import labels
     df_list=[]
     for i in range (0, len(activity_file), 1):
-        df_list.append=pd.read_csv(activity_file[i], sep="\t", decimal=',', low_memory=False)
+        df_list.append(pd.read_csv(activity_file[i], sep="\t", decimal=',', low_memory=False))
     df_IDs_reg_labels = pd.concat(df_list, axis=0)
     df_IDs_reg_labels=df_IDs_reg_labels.drop_duplicates()
     #parameters
@@ -99,7 +117,7 @@ def cli(activity_file, seq_file, sequence_length, batch_size, model_name):
     input_seq_all=tf.convert_to_tensor(df_IDs_seqs_reg_labels_all["Seq one hot encoded"].to_list())
 
     #load model
-    model=keras.models.load_model(str(model_name))
+    model=keras.models.load_model(str(model_folder)+str(model_name))
 
     #predictions_ref=model.predict(input_seq_all, batch_size=batch_size, verbose=2)
 
@@ -173,21 +191,21 @@ def cli(activity_file, seq_file, sequence_length, batch_size, model_name):
     #print(seqs_tfmodisco_format.shape)
     print("data saved to "+str(os.getcwd()))
     #save contribution scores as npz files
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz', hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz', hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz', hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_CTRL.npz', hypothetical_contribution_scores_mean_RAW_CTRL)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_IL1B.npz', hypothetical_contribution_scores_mean_RAW_IL1B)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_RAW_TGFB.npz', hypothetical_contribution_scores_mean_RAW_TGFB)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz', hypothetical_contribution_scores_mean_TeloHAEC_CTRL)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz', hypothetical_contribution_scores_mean_HASMC_untreatedPilot)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HASMC_Chol.npz', hypothetical_contribution_scores_mean_HASMC_Chol)
-    np.savez(str(os.getcwd())+'/hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz', hypothetical_contribution_scores_mean_HepG2_untreatedPilot)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL.npz', hypothetical_contribution_scores_mean_cell_3T3_diff_CTRL)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL.npz', hypothetical_contribution_scores_mean_ccell_3T3_undiff_CTRL)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB.npz', hypothetical_contribution_scores_mean_cell_3T3_undiff_TGFB)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_RAW_CTRL.npz', hypothetical_contribution_scores_mean_RAW_CTRL)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_RAW_IL1B.npz', hypothetical_contribution_scores_mean_RAW_IL1B)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_RAW_TGFB.npz', hypothetical_contribution_scores_mean_RAW_TGFB)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_TeloHAEC_CTRL.npz', hypothetical_contribution_scores_mean_TeloHAEC_CTRL)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_24h)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h.npz', hypothetical_contribution_scores_mean_TeloHAEC_IL1b_6h)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_HASMC_untreatedPilot.npz', hypothetical_contribution_scores_mean_HASMC_untreatedPilot)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_HASMC_Chol.npz', hypothetical_contribution_scores_mean_HASMC_Chol)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'hypothetical_contribution_scores_mean_HepG2_untreatedPilot.npz', hypothetical_contribution_scores_mean_HepG2_untreatedPilot)
 
     #save sequences as npz file
-    np.savez(str(os.getcwd())+'/Sequences.npz', seqs_tfmodisco_format)
+    np.savez(str(os.getcwd())+"/"+str(model_name)+'Sequences.npz', seqs_tfmodisco_format)
 
 
 
